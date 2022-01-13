@@ -195,8 +195,3 @@ function random_utilities!(rng::AbstractRNG, diagram::InfluenceDiagram, v::Node;
     index_v = findfirst(j -> j==v, diagram.V)
     diagram.Y[index_v] = Utilities(v, data)
 end
-
-
-
-
-"""
