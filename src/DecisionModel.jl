@@ -14,6 +14,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node}, 
         else
             for s_h in S[P_d]
                 @constraint(model, sum(sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1))
+            end
     end
     return z_d
 end
@@ -38,7 +39,7 @@ z = DecisionVariables(model, diagram)
 ```
 """
 function DecisionVariables(model::Model, diagram::InfluenceDiagram; names::Bool=false, name::String="z")
-    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, (names ? "$(name)_$(d.j)$(s)" : "")) for (d, I_d) in zip(diagram.D, diagram.I_j[diagram.D]),diagram.I_j])
+    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, (names ? "$(name)_$(d.j)$(s)" : "")) for (d, I_d) in zip(diagram.D, diagram.I_j[diagram.D])])
 end
 
 function is_forbidden(s::Path, forbidden_paths::Vector{ForbiddenPath})
