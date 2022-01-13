@@ -1,6 +1,6 @@
 using JuMP
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node}, base_name::String="", P_d::Vector{Node})
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node}, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
@@ -9,13 +9,13 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node}, 
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
-        if isempty(P_d)
+        #if isempty(P_d)
             @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
-        else
-            for s_h in S[P_d]
-                @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
-            end
-        end
+        #else
+        #    for s_h in S[P_d]
+        #        @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
+        #    end
+        #end
     end
     return z_d
 end
