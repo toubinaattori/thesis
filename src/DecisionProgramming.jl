@@ -8,6 +8,7 @@ include("printing.jl")
 
 export Node,
     Name,
+    ConditionalParentInfo,
     AbstractNode,
     ChanceNode,
     DecisionNode,
