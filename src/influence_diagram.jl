@@ -36,6 +36,15 @@ struct ChanceNode <: AbstractNode
 
 end
 
+struct ConditionalParentInfo
+    parent::Name
+    dictator::Name
+    states::Vector{Name}
+    function ConditionalParentInfo(parent, dictator, states)
+        return new(parent, dictator, states)
+    end
+end
+
 """
     struct DecisionNode <: AbstractNode
 A struct for decision nodes, includes the name, information set and states of the node
@@ -91,15 +100,6 @@ struct States <: AbstractArray{State, 1}
             throw(DomainError("All states must be ≥ 1."))
         end
         new(vals)
-    end
-end
-
-struct ConditionalParentInfo
-    parent::Name
-    dictator::Name
-    states::Vector{Name}
-    function ConditionalParentInfo(parent, dictator, states)
-        return new(parent, dictator, states)
     end
 end
 
