@@ -44,7 +44,7 @@ struct DecisionNode <: AbstractNode
     name::Name
     I_j::Vector{Name}
     states::Vector{Name}
-    A_j::Vector{[Name,Name,Vector{Name}]}
+    A_j::Vector{ConditionalParentInfo}
     function DecisionNode(name, I_j, states,A_j)
         return new(name, I_j, states,A_j)
     end
@@ -91,6 +91,15 @@ struct States <: AbstractArray{State, 1}
             throw(DomainError("All states must be ≥ 1."))
         end
         new(vals)
+    end
+end
+
+struct ConditionalParentInfo
+    parent::Name
+    dictator::Name
+    states::Vector{Name}
+    function ConditionalParentInfo(parent, dictator, states)
+        return new(parent, dictator, states)
     end
 end
 
