@@ -15,6 +15,7 @@ Primitive type for node names. Alias for `String`.
 """
 const Name = String
 
+
 """
     abstract type AbstractNode end
 Node type for directed, acyclic graph.
@@ -43,9 +44,9 @@ struct DecisionNode <: AbstractNode
     name::Name
     I_j::Vector{Name}
     states::Vector{Name}
-    P_j::Vector{Name}
-    function DecisionNode(name, I_j, states,P_j)
-        return new(name, I_j, states,P_j)
+    A_j::Vector{[Name,Name,Vector{Name}]}
+    function DecisionNode(name, I_j, states,A_j)
+        return new(name, I_j, states,A_j)
     end
 end
 
