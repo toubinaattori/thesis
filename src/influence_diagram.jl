@@ -228,7 +228,7 @@ struct Probabilities{N} <: AbstractArray{Float64, N}
     function Probabilities(c::Node, data::Array{Float64, N}) where N
         for i in CartesianIndices(size(data)[1:end-1])
             if !(sum(data[i, :]) ≈ 1)
-                throw(DomainError("Probabilities should sum to one. bastard"))
+                throw(DomainError(data))
             end
         end
         new{N}(c, data)
