@@ -1,11 +1,11 @@
 using JuMP
 using Combinatorics
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},A_j::Vector{ConditionalParentInfo}, base_name::String="")
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
-    for a in collect(comibnations(A_j))
+    for a in collect(comibnations(n.A_j))
         parents <- map(x->x.parent,a)
         println(parents)
     end
@@ -39,7 +39,7 @@ z = DecisionVariables(model, diagram)
 ```
 """
 function DecisionVariables(model::Model, diagram::InfluenceDiagram; names::Bool=false, name::String="z")
-    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, Node.A_j, (names ? "$(name)_$(d.j)$(s)" : "")) for (d, I_d, Node) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
+    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, (names ? "$(name)_$(d.j)$(s)" : "")) for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
 function is_forbidden(s::Path, forbidden_paths::Vector{ForbiddenPath})
