@@ -5,10 +5,10 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
-    for a in collect(comibnations(n.A_j))
-        parents <- map(x->x.parent,a)
-        println(parents)
-    end
+    # for a in collect(comibnations(n.A_j))
+    #     parents <- map(x->x.parent,a)
+    #     println(parents)
+    # end
     for s in paths(dims)
         z_d[s...] = @variable(model, binary=true, base_name=base_name)
     end
