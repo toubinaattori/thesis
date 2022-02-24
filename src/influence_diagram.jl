@@ -166,15 +166,15 @@ function paths(states::AbstractVector{State})
 end
 
 function extension(s::State , n::Node, states::AbstractVector{State})
-    paths = paths(states)
-    extension = filter(p -> p[n] == s, paths)
+    pa = paths(states)
+    extension = filter(p -> p[n] == s, pa)
     extension
 end
 
 function extension_complement(s::State , n::Node, states::AbstractVector{State})
-    paths = paths(states)
+    pa = paths(states)
     extension = extension(s,n,states)
-    complement = filter(p -> p ∉ extension , paths)
+    complement = filter(p -> p ∉ extension , pa)
     complement
 end
 
