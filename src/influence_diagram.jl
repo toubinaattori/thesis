@@ -165,6 +165,19 @@ function paths(states::AbstractVector{State})
     product(UnitRange.(one(eltype(states)), states)...)
 end
 
+function extension(s::State , n::Node, states::AbstractVector{State})
+    paths = paths(states)
+    extension = filter(p -> p[n] == s, paths)
+    extension
+end
+
+function extension_complement(s::State , n::Node, states::AbstractVector{State})
+    paths = paths(states)
+    extension = extension(s,n,states)
+    complement = filter(p -> p ∉ extension , paths)
+    complement
+end
+
 """
     function paths(states::AbstractVector{State}, fixed::FixedPath)
 Iterate over paths with fixed states in lexicographical order.
