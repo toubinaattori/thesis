@@ -172,6 +172,7 @@ function extension(s::State , n::Node, states::AbstractVector{State})
 end
 
 function extension_complement(s::State , n::Node, states::AbstractVector{State})
+    println("kakka")
     pa = paths(states)
     extension = extension(s,n,states)
     complement = filter(p -> p ∉ extension , pa)
