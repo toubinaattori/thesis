@@ -35,16 +35,6 @@ struct ChanceNode <: AbstractNode
     end
 
 end
-
-struct ConditionalParentInfo
-    parent::Name
-    dictator::Name
-    states::Vector{Name}
-    function ConditionalParentInfo(parent, dictator, states)
-        return new(parent, dictator, states)
-    end
-end
-
 """
     struct DecisionNode <: AbstractNode
 A struct for decision nodes, includes the name, information set and states of the node
@@ -53,9 +43,8 @@ struct DecisionNode <: AbstractNode
     name::Name
     I_j::Vector{Name}
     states::Vector{Name}
-    A_j::Vector{ConditionalParentInfo}
-    function DecisionNode(name, I_j, states,A_j)
-        return new(name, I_j, states,A_j)
+    function DecisionNode(name, I_j, states)
+        return new(name, I_j, states)
     end
 end
 
