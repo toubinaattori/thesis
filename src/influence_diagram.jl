@@ -167,14 +167,14 @@ end
 
 function extension!(s::State , n::Node, states::AbstractVector{State})
     pa = paths(states)
-    extension = filter(p -> p[n] == s, pa)
+    extension = Iterators.filter(p -> p[n] == s, pa)
     extension
 end
 
 function extension_complement!(s::State , n::Node, states::AbstractVector{State})
     pa = paths(states)
-    extension = extension(s,n,states)
-    complement = filter(p -> p ∉ extension , pa)
+    extension = extension!(s,n,states)
+    complement = Iterators.filter(p -> p ∉ extension , pa)
     complement
 end
 
