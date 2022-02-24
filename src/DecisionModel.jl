@@ -1,5 +1,4 @@
 using JuMP
-using Combinatorics
 
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode, base_name::String="")
     # Create decision variables.
@@ -159,6 +158,26 @@ function PathCompatibilityVariables(model::Model,
     end
 
     x_s
+end
+
+function InformationConstraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables)
+        # states of nodes in information structure (s_d | s_I(d))
+        dims = S[[I_d; d]]
+
+        # Theoretical upper bound based on number of paths with information structure (s_d | s_I(d)) divided by number of possible decision strategies in other decision nodes
+        other_decisions = filter(j -> all(j != d_set for d_set in [I_d; d]), D)
+        theoretical_ub = prod(S)/prod(dims)/ prod(S[other_decisions])
+    
+        # paths that have a corresponding path compatibility variable
+        existing_paths = keys(x_s)
+    
+        for s_d_s_Id in paths(dims) # iterate through all information states and states of d
+            # paths with (s_d | s_I(d)) information structure
+            feasible_paths = filter(s -> s[[I_d; d]] == s_d_s_Id, existing_paths)
+    
+            @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) ≤ z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
+        end
+
 end
 
 """
