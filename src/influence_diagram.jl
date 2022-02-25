@@ -165,7 +165,7 @@ function paths(states::AbstractVector{State})
     product(UnitRange.(one(eltype(states)), states)...)
 end
 
-function extension!(s::State , n::Node, states::AbstractVector{State})
+function extension!(s::AbstractVector{State} , n::AbstractVector{Node}, states::AbstractVector{State})
     pa = paths(states)
     extension = Iterators.filter(p -> p[n] == s, pa)
     extension
@@ -177,6 +177,7 @@ function extension_complement!(s::State , n::Node, states::AbstractVector{State}
     complement = Iterators.filter(p -> p ∉ extension , pa)
     complement
 end
+
 
 """
     function paths(states::AbstractVector{State}, fixed::FixedPath)
