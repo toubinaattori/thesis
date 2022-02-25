@@ -432,7 +432,7 @@ mutable struct InfluenceDiagram
     Y::Vector{Utilities}
     P::AbstractPathProbability
     U::AbstractPathUtility
-    K::Tuple{Node,Node}
+    K::Vector{Tuple{Node,Node}}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
