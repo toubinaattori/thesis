@@ -169,8 +169,8 @@ end
 
 function InformationConstraintVariables(model::Model,
     diagram::InfluenceDiagram,
-    z::DecisionVariables;
-    x_s::PathCompatibilityVariables,
+    z::DecisionVariables,
+    x_s::PathCompatibilityVariables;
     names::Bool=false,
     name::String="x",
     forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
