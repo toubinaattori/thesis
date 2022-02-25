@@ -43,8 +43,9 @@ struct DecisionNode <: AbstractNode
     name::Name
     I_j::Vector{Name}
     states::Vector{Name}
-    function DecisionNode(name, I_j, states)
-        return new(name, I_j, states)
+    K_j::Vector{Name}
+    function DecisionNode(name, I_j, states,K_j)
+        return new(name, I_j, states,K_j)
     end
 end
 
@@ -163,19 +164,6 @@ julia> vec(collect(paths(states)))
 """
 function paths(states::AbstractVector{State})
     product(UnitRange.(one(eltype(states)), states)...)
-end
-
-function extension!(s::AbstractVector{State} , n::AbstractVector{Node}, states::AbstractVector{State})
-    pa = paths(states)
-    extension = Iterators.filter(p -> p[n] == s, pa)
-    extension
-end
-
-function extension_complement!(s::State , n::Node, states::AbstractVector{State})
-    pa = paths(states)
-    extension = extension!(s,n,states)
-    complement = Iterators.filter(p -> p ∉ extension , pa)
-    complement
 end
 
 
@@ -444,6 +432,7 @@ mutable struct InfluenceDiagram
     Y::Vector{Utilities}
     P::AbstractPathProbability
     U::AbstractPathUtility
+    K::Tuple{Node,Node}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
@@ -807,6 +796,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
     C = Vector{Node}()
     D = Vector{Node}()
     V = Vector{Node}()
+    K = Tuple{Node,Node}()
     # Declare helper collections
     indices = Dict{Name, Node}()
     indexed_nodes = Set{Name}()
@@ -828,6 +818,9 @@ function generate_arcs!(diagram::InfluenceDiagram)
                 push!(C, Node(index))
             else
                 push!(D, Node(index))
+                for k in j.K_j
+                    push!(K,(Node(indices[k]), index))
+                end
             end
             # Increase index
             index += 1
@@ -857,6 +850,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
     diagram.C = C
     diagram.D = D
     diagram.V = V
+    diagram.K = K
     # Declaring X and Y
     diagram.X = Vector{Probabilities}()
     diagram.Y = Vector{Utilities}()

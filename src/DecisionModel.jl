@@ -56,6 +56,13 @@ function path_compatibility_variable(model::Model, base_name::String="")
     return x
 end
 
+function information_structure_variable(model::Model, base_name::String="")
+    # Create a path compatiblity variable
+    x = @variable(model, base_name=base_name, binary = true)
+
+    return x
+end
+
 struct PathCompatibilityVariables{N} <: AbstractDict{Path{N}, VariableRef}
     data::Dict{Path{N}, VariableRef}
 end
@@ -160,18 +167,57 @@ function PathCompatibilityVariables(model::Model,
     x_s
 end
 
-function InformationConstraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables)
-        # states of nodes in information structure (s_d | s_I(d))
-        dims_I_d = S[[I_d]]
-        dims_d = S[[d]]
-    
-        for s_I_d in paths(dims_I_d) # iterate through all information states 
-            for s_d in paths(dims_d)
-                # paths with (s_d | s_I(d)) information structure
-                e1 = extension_complement!(s_d,d,S)
-                e3 = extension!(s_I_d,I_d,S)
-            end
+function InformationConstraintVariables(model::Model,
+    diagram::InfluenceDiagram,
+    z::DecisionVariables;
+    x_s::PathCompatibilityVariables,
+    names::Bool=false,
+    name::String="x",
+    forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
+    fixed::FixedPath=Dict{Node, State}(),
+    probability_cut::Bool=true,
+    probability_scale_factor::Float64=1.0)
+
+
+    # Create path compatibility variable for each effective path.
+    N = length(diagram.S)
+    variables_x = Dict{Tuple{Node,Node}, VariableRef}(
+        s => information_structure_variable(model, (names ? "$(name)$(s)" : ""))
+        for s in diagram.K
+    )
+
+    x_s = PathCompatibilityVariables{N}(variables_x_s)
+
+    # Add decision strategy constraints for each decision node
+    for (d, z_d) in zip(z.D, z.z)
+        decision_strategy_constraint(model, diagram.S, d, diagram.I_j[d], z.D, z_d, x_s)
+    end
+
+    if probability_cut
+        @constraint(model, sum(x * diagram.P(s) * probability_scale_factor for (s, x) in x_s) == 1.0 * probability_scale_factor)
+    end
+
+end
+
+function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, k::Node)
+    # states of nodes in information structure (s_d | s_I(d))
+    nodes = [I_d;d]
+    d_index = findall(x -> x == d, nodes)
+    k_index = findall(x -> x == k, nodes)
+    Id_index = findall(x -> x in I_d && x != k, nodes)
+    Id_without_k = filter(x -> x != k, I_d)
+    dims = S[[I_d; d]]
+
+    # paths that have a corresponding path compatibility variable
+    existing_paths = keys(x_s)
+
+    for s_d_s_Id in paths(dims) # iterate through all information states and states of d
+        # paths with (s_d | s_I(d)) information structure
+        s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k] != s_d_s_Id[k_index], existing_paths)
+        for s in s_prime
+            @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,(k,d),0)
         end
+    end
 
 end
 
