@@ -197,7 +197,7 @@ function InformationConstraintVariables(model::Model,
 
 end
 
-function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::InformationStructureVariables)
+function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::Dict{Tuple{Node,Node},VariableRef})
     # states of nodes in information structure (s_d | s_I(d))
     for k in filter(tup -> tup[2] == d, K)
         nodes = [I_d;d]
