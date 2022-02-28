@@ -66,6 +66,9 @@ end
 struct PathCompatibilityVariables{N} <: AbstractDict{Path{N}, VariableRef}
     data::Dict{Path{N}, VariableRef}
 end
+struct InformationStructureVariables{N} <: AbstractDict{Tuple{Node,Node}, VariableRef}
+    data::Dict{Tuple{Node,Node}, VariableRef}
+end
 
 Base.length(x_s::PathCompatibilityVariables) = length(x_s.data)
 Base.getindex(x_s::PathCompatibilityVariables, key) = getindex(x_s.data, key)
@@ -186,11 +189,11 @@ function InformationConstraintVariables(model::Model,
         for s in diagram.K
     )
 
-    x_s = PathCompatibilityVariables{N}(variables_x_s)
+    x = InformationStructureVariables{N}(variables_x)
 
-    # Add decision strategy constraints for each decision node
+    # Add information constraints for each decision node
     for (d, z_d) in zip(z.D, z.z)
-        decision_strategy_constraint(model, diagram.S, d, diagram.I_j[d], z.D, z_d, x_s)
+        information_constraints(model, diagram.S, d, diagram.I_j[d], z_d, x_s, diagram.K,x)
     end
 
     if probability_cut
@@ -199,26 +202,27 @@ function InformationConstraintVariables(model::Model,
 
 end
 
-function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, k::Node)
+function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::InformationConstraintVariables)
     # states of nodes in information structure (s_d | s_I(d))
-    nodes = [I_d;d]
-    d_index = findall(x -> x == d, nodes)
-    k_index = findall(x -> x == k, nodes)
-    Id_index = findall(x -> x in I_d && x != k, nodes)
-    Id_without_k = filter(x -> x != k, I_d)
-    dims = S[[I_d; d]]
+    for k in filter(tup -> tup[2] == d, K)
+        nodes = [I_d;d]
+        d_index = findall(x -> x == d, nodes)
+        k_index = findall(x -> x == k, nodes)
+        Id_index = findall(x -> x in I_d && x != k, nodes)
+        Id_without_k = filter(x -> x != k, I_d)
+        dims = S[[I_d; d]]
 
-    # paths that have a corresponding path compatibility variable
-    existing_paths = keys(x_s)
+        # paths that have a corresponding path compatibility variable
+        existing_paths = keys(x_s)
 
-    for s_d_s_Id in paths(dims) # iterate through all information states and states of d
-        # paths with (s_d | s_I(d)) information structure
-        s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k] != s_d_s_Id[k_index], existing_paths)
-        for s in s_prime
-            @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,(k,d),0))
+        for s_d_s_Id in paths(dims) # iterate through all information states and states of d
+            # paths with (s_d | s_I(d)) information structure
+            s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k] != s_d_s_Id[k_index], existing_paths)
+            for s in s_prime
+                @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,(k,d),0))
+            end
         end
     end
-
 end
 
 """
