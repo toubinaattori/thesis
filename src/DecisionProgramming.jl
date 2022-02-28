@@ -43,6 +43,7 @@ export Node,
 export DecisionVariables,
     PathCompatibilityVariables,
     InformationConstraintVariables,
+    InformationStructureVariables,
     lazy_probability_cut,
     expected_value,
     conditional_value_at_risk
