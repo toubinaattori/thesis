@@ -433,6 +433,7 @@ mutable struct InfluenceDiagram
     P::AbstractPathProbability
     U::AbstractPathUtility
     K::Vector{Tuple{Node,Node}}
+    Cost::Dict{Tuple{Node,Node},Int16}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
@@ -490,6 +491,10 @@ function add_node!(diagram::InfluenceDiagram, node::AbstractNode)
         validate_node(diagram, node.name, node.I_j, value_node = true)
     end
     push!(diagram.Nodes, node)
+end
+
+function add_costs(diagram::InfluenceDiagram, costs::Dict{Tuple{Node,Node},Int16})
+    diagram.Cost = costs
 end
 
 

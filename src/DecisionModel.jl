@@ -194,7 +194,7 @@ function InformationConstraintVariables(model::Model,
     for (d, z_d) in zip(z.D, z.z)
         information_constraints(model, diagram.S, d, diagram.I_j[d], z_d, x_s, diagram.K,variables_x)
     end
-
+    return variables_x
 end
 
 function information_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::Dict{Tuple{Node,Node},VariableRef})
@@ -262,9 +262,9 @@ EV = expected_value(model, diagram, x_s)
 """
 function expected_value(model::Model,
     diagram::InfluenceDiagram,
-    x_s::PathCompatibilityVariables)
-
-    @expression(model, sum(diagram.P(s) * x * diagram.U(s, diagram.translation) for (s, x) in x_s))
+    x_s::PathCompatibilityVariables,
+    x_x::Dict{Tuple{Node,Node},VariableRef})
+    @expression(model, sum(diagram.P(s) * x * diagram.U(s, diagram.translation) for (s, x) in x_s) - sum(diagram.Cost(k) * x for (k,x) in x_x ))
 end
 
 """
