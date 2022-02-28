@@ -189,17 +189,11 @@ function InformationConstraintVariables(model::Model,
         for s in diagram.K
     )
 
-    x = InformationStructureVariables{N}(variables_x)
-    return x
 
-    # # Add information constraints for each decision node
-    # for (d, z_d) in zip(z.D, z.z)
-    #     information_constraints(model, diagram.S, d, diagram.I_j[d], z_d, x_s, diagram.K,x)
-    # end
-
-    # if probability_cut
-    #     @constraint(model, sum(x * diagram.P(s) * probability_scale_factor for (s, x) in x_s) == 1.0 * probability_scale_factor)
-    # end
+    # Add information constraints for each decision node
+    for (d, z_d) in zip(z.D, z.z)
+        information_constraints(model, diagram.S, d, diagram.I_j[d], z_d, x_s, diagram.K,variables_x)
+    end
 
 end
 
