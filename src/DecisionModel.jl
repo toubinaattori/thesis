@@ -217,19 +217,10 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
 
         for s_d_s_Id in paths(dims) # iterate through all information states and states of d
             # paths with (s_d | s_I(d)) information structure
-            println(s_d_s_Id)
-            println(d_index)
-            println(Id_index)
-            println(k_index)
-            println(first(existing_paths))
-            println(d)
-            println(Id_without_k)
-            println(k)
-            println("-----------")
-            # s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k[1]] != s_d_s_Id[k_index], existing_paths)
-            # for s in s_prime
-            #     @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,k,0))
-            # end
+            s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k[1]] != s_d_s_Id[k_index], existing_paths)
+            for s in s_prime
+                @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,k,0))
+            end
         end
     end
 end
