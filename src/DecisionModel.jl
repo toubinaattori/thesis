@@ -221,7 +221,7 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
             println(d_index)
             println(Id_index)
             println(k_index)
-            println(s)
+            println(existing_paths[1])
             println(d)
             println(Id_without_k)
             println(k)
