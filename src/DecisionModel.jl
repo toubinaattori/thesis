@@ -207,9 +207,9 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
     for k in filter(tup -> tup[2] == d, K)
         nodes = [I_d;d]
         d_index = findall(x -> x == d, nodes)
-        k_index = findall(x -> x == k, nodes)
-        Id_index = findall(x -> x in I_d && x != k, nodes)
-        Id_without_k = filter(x -> x != k, I_d)
+        k_index = findall(x -> x == k[1], nodes)
+        Id_index = findall(x -> x in I_d && x != k[1], nodes)
+        Id_without_k = filter(x -> x != k[1], I_d)
         dims = S[[I_d; d]]
 
         # paths that have a corresponding path compatibility variable
@@ -226,9 +226,9 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
             println(Id_without_k)
             println(k)
             println("-----------")
-            # s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k] != s_d_s_Id[k_index], existing_paths)
+            # s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k[1]] != s_d_s_Id[k_index], existing_paths)
             # for s in s_prime
-            #     @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,(k,d),0))
+            #     @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + get(x_x,k,0))
             # end
         end
     end
