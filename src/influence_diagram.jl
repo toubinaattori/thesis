@@ -22,7 +22,11 @@ Node type for directed, acyclic graph.
 """
 abstract type AbstractNode end
 
+abstract type Costs end
+
 """
+
+
     struct ChanceNode <: AbstractNode
 A struct for chance nodes, includes the name, information set and states of the node
 """
@@ -61,7 +65,7 @@ struct ValueNode <: AbstractNode
     end
 end
 
-struct Costs 
+struct Costs <: Costs
     arc::Tuple{Node,Node}
     cost::Int
     function Costs(arc, cost)
