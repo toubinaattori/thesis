@@ -59,7 +59,7 @@ end
 function information_structure_variable(model::Model, base_name::String="")
     # Create a path compatiblity variable
     x = @variable(model, base_name=base_name)
-    @constraint(model, x == 0)
+    @constraint(model, -0.0000000001 < x < 0.000000001)
     return x
 end
 
@@ -96,7 +96,7 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
         # paths with (s_d | s_I(d)) information structure
         feasible_paths = filter(s -> s[[I_d; d]] == s_d_s_Id, existing_paths)
 
-        @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) ≤ z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
+        @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
     end
 end
 
