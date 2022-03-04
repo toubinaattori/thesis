@@ -61,6 +61,18 @@ struct ValueNode <: AbstractNode
     end
 end
 
+struct Costs 
+    arc::Tuple{Node,Node}
+    cost::Int
+    function Costs(arc, cost)
+        return new(arc, cost)
+    end
+end
+
+function (C::Vector{Costs})(arc::Tuple{Node,Node})
+    Costs = filter(x -> x.arc == arc,C)
+    Costs.cost
+end
 
 
 """
@@ -240,7 +252,7 @@ Base.getindex(P::Probabilities, I::Vararg{Int,N}) where N = getindex(P.data, I..
     abstract type AbstractPathProbability end
 Abstract path probability type.
 """
-abstract type AbstractPathProbability end
+abstract type U end
 
 """
     struct DefaultPathProbability <: AbstractPathProbability
@@ -433,7 +445,7 @@ mutable struct InfluenceDiagram
     P::AbstractPathProbability
     U::AbstractPathUtility
     K::Vector{Tuple{Node,Node}}
-    Cost::Dict{Tuple{Node,Node},Int16}
+    Cost::Vector{Cost}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
@@ -493,8 +505,8 @@ function add_node!(diagram::InfluenceDiagram, node::AbstractNode)
     push!(diagram.Nodes, node)
 end
 
-function add_costs(diagram::InfluenceDiagram, costs::Dict{Tuple{Node,Node},Int16})
-    diagram.Cost = costs
+function add_costs(diagram::InfluenceDiagram,costs::Cost)
+    push!(diagram.Cost, costs)
 end
 
 
