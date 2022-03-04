@@ -252,7 +252,7 @@ Base.getindex(P::Probabilities, I::Vararg{Int,N}) where N = getindex(P.data, I..
     abstract type AbstractPathProbability end
 Abstract path probability type.
 """
-abstract type U end
+abstract type AbstractPathProbability end
 
 """
     struct DefaultPathProbability <: AbstractPathProbability
