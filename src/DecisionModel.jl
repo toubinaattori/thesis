@@ -264,7 +264,7 @@ function expected_value(model::Model,
     diagram::InfluenceDiagram,
     x_s::PathCompatibilityVariables,
     x_x::Dict{Tuple{Node,Node},VariableRef})
-    @expression(model, sum(diagram.P(s) * x * diagram.U(s, diagram.translation) for (s, x) in x_s) - sum(diagram.Cost(k) * x for (k,x) in x_x ))
+    @expression(model, sum(diagram.P(s) * x * diagram.U(s, diagram.translation) for (s, x) in x_s) - sum(diagram.Cs[k] * x for (k,x) in x_x ))
 end
 
 """

@@ -66,14 +66,14 @@ struct ValueNode <: AbstractNode
 end
 
 struct Costs <: AbstractCosts
-    arc::Tuple{Node,Node}
+    arc::Tuple{Name,Name}
     cost::Int
     function Costs(arc, cost)
         return new(arc, cost)
     end
 end
 
-function (C::Vector{Costs})(arc::Tuple{Node,Node})
+function (C::Vector{Costs})(arc::Tuple{Name,Name})
     Costs = filter(x -> x.arc == arc,C)
     Costs.cost
 end
@@ -450,6 +450,7 @@ mutable struct InfluenceDiagram
     U::AbstractPathUtility
     K::Vector{Tuple{Node,Node}}
     Cost::Vector{Costs}
+    Cs::Dict{Tuple{Node,Node},Int}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
@@ -818,6 +819,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
     D = Vector{Node}()
     V = Vector{Node}()
     K = Vector{Tuple{Node,Node}}()
+    Cs = Dict{Tuple{Node,Node},Int}()
     # Declare helper collections
     indices = Dict{Name, Node}()
     indexed_nodes = Set{Name}()
@@ -841,6 +843,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
                 push!(D, Node(index))
                 for k in j.K_j
                     push!(K,(Node(indices[k]), index))
+                    Cs[(indices[k],index)] = diagram.Costs((k,j.name))
                 end
             end
             # Increase index
@@ -872,6 +875,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
     diagram.D = D
     diagram.V = V
     diagram.K = K
+    diagram.Cs = Cs
     # Declaring X and Y
     diagram.X = Vector{Probabilities}()
     diagram.Y = Vector{Utilities}()
