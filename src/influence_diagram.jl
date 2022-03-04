@@ -449,11 +449,12 @@ mutable struct InfluenceDiagram
     P::AbstractPathProbability
     U::AbstractPathUtility
     K::Vector{Tuple{Node,Node}}
-    Cost::Vector{Costs}
+    Cost::Vector{AbstractCosts}
     Cs::Dict{Tuple{Node,Node},Int}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
+        new(Vector{AbstractCosts}())
     end
 end
 
