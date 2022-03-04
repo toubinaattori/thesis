@@ -510,7 +510,7 @@ function add_node!(diagram::InfluenceDiagram, node::AbstractNode)
     push!(diagram.Nodes, node)
 end
 
-function add_costs(diagram::InfluenceDiagram,costs::Costs)
+function add_costs!(diagram::InfluenceDiagram,costs::Costs)
     push!(diagram.Cost, costs)
 end
 
