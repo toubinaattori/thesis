@@ -454,7 +454,6 @@ mutable struct InfluenceDiagram
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
-        new(Vector{AbstractCosts}())
     end
 end
 
@@ -844,7 +843,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
                 push!(D, Node(index))
                 for k in j.K_j
                     push!(K,(Node(indices[k]), index))
-                    Cs[(indices[k],index)] = diagram.Costs((k,j.name))
+                    Cs[(indices[k],index)] = diagram.Cost((k,j.name))
                 end
             end
             # Increase index
