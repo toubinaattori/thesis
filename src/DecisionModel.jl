@@ -215,6 +215,12 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
             s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k[1]] != s_d_s_Id[k_index], existing_paths)
             println(s_d_s_Id)
             println(s_prime)
+            println(d)
+            println(d_index)
+            println(Id_without_k)
+            println(Id_index)
+            println(k[1])
+            println(k_index)
             println("-----------")
             for s in s_prime
                 @constraint(model, get(x_s, s, 0) <= 1 - z[s_d_s_Id...] + x_x[k])
