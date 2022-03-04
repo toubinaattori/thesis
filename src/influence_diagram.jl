@@ -22,7 +22,7 @@ Node type for directed, acyclic graph.
 """
 abstract type AbstractNode end
 
-abstract type Costs end
+abstract type AbstractCosts end
 
 """
 
@@ -65,7 +65,7 @@ struct ValueNode <: AbstractNode
     end
 end
 
-struct Costs <: Costs
+struct Costs <: AbstractCosts
     arc::Tuple{Node,Node}
     cost::Int
     function Costs(arc, cost)
