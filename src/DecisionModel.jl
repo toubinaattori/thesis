@@ -214,7 +214,7 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
             # paths with (s_d | s_I(d)) information structure
             s_prime = filter(s -> s[d] != s_d_s_Id[d_index] && s[Id_without_k] == s_d_s_Id[Id_index] && s[k[1]] != s_d_s_Id[k_index], existing_paths)
             for s in s_prime
-                @constraint(model, get(x_s, s, 0) ≤ 1 - z[s_d_s_Id...] + x_x[k])
+                @constraint(model, get(x_s, s, 0) <= 1 - z[s_d_s_Id...] + x_x[k])
             end
         end
     end
