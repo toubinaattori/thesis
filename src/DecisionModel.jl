@@ -58,8 +58,7 @@ end
 
 function information_structure_variable(model::Model, base_name::String="")
     # Create a path compatiblity variable
-    x = @variable(model, base_name=base_name)
-    @constraint(model, -0.01 <= x <= 0.01)
+    x = @variable(model, base_name=base_name, binary=true)
     return x
 end
 
