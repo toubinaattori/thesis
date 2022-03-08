@@ -215,7 +215,6 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
             for s in s_prime
                 @constraint(model, get(x_s, s, 0) <= 1 - z[s_d_s_Id...] + x_x[k])
             end
-            println("-----------------------")
         end
     end
 end
