@@ -261,7 +261,8 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
                     println(s_d_s_k)
                     println(s_d_s_Id)
                     println("--------------------")
-                    @constraint(model, z[s_d_s_k...]  >= z[s_d_s_Id...]) - x_x[k])
+                    @constraint(model, z[s_d_s_k...]  >= z[s_d_s_Id...] - x_x[k])
+                    @constraint(model, z[s_d_s_Id...]  >= z[s_d_s_k...] - x_x[k])
                 end
             end 
         end
