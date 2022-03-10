@@ -256,13 +256,14 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
 
         for s_d_s_Id in paths(dims) # iterate through all information states and states of d
             # paths with (s_d | s_I(d)) information structure
-            s_d_k_I = filter(x -> x[first(k_index)] != s_d_s_Id[first(k_index)] && x[Id_without_k] == s_d_s_Id[Id_without_k] && last(x) == last(s_d_s_Id), paths(dims))
-            println(s_d_k_I)
-            println(s_d_s_Id)
-            println("--------------------")
-            for s in s_d_k_I
-                @constraint(model, z[s...] >= z[s_d_s_Id...] - x_x[k])
-            end
+            for s_d_s_k in paths(dims)
+                if s_d_s_k[first(k_index)] != s_d_s_Id[first(k_index)] && s_d_s_k[Id_without_k] == s_d_k_I[Id_without_k] && last(s_d_k_I) == last(s_d_s_Id)
+                    println(s_d_k_I)
+                    println(s_d_s_Id)
+                    println("--------------------")
+                    @constraint(model, z[s...] >= z[s_d_s_Id...] - x_x[k])
+                end
+            end 
         end
     end
 end
