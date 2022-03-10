@@ -252,7 +252,7 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
         nodes = [I_d;d]
         k_index = findall(x -> x == k[1], nodes)
         dims = S[[I_d; d]]
-        dims_k = S[k[1]]
+        dims_k = S[[k[1]]]
 
         # paths that have a corresponding path compatibility variable
         existing_paths = keys(x_s)
