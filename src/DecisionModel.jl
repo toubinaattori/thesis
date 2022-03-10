@@ -251,7 +251,7 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
     for k in filter(tup -> tup[2] == d, K)
         nodes = [I_d;d]
         k_index = findall(x -> x == k[1], nodes)
-        Id_without_k = filter(x -> x != k[1], I_d)
+        Id_without_k = findall(x -> x != k[1], I_d)
         dims = S[[I_d; d]]
 
         for s_d_s_Id in paths(dims) # iterate through all information states and states of d
