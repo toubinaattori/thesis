@@ -262,7 +262,7 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
             for s_k in paths(dims_k)
                 if s_k != s_d_s_Id[first(k_index)]
                     s_d_s_Id_k = s_d_s_Id
-                    s_d_s_Id_k[first(k_index)]] = s_k
+                    s_d_s_Id_k[first(k_index)] = s_k
                     println(s_d_s_Id_k)
                     println(s_d_s_Id)
                     println("--------------------")
