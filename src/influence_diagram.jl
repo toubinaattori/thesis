@@ -819,7 +819,7 @@ function generate_arcs!(diagram::InfluenceDiagram)
     D = Vector{Node}()
     V = Vector{Node}()
     K = Vector{Tuple{Node,Node}}()
-    Cs = Dict{Tuple{Node,Node},Int}()
+    Cs = Dict{Tuple{Node,Node},Float64}()
     # Declare helper collections
     indices = Dict{Name, Node}()
     indexed_nodes = Set{Name}()
