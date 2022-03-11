@@ -67,7 +67,7 @@ end
 
 struct Costs <: AbstractCosts
     arc::Tuple{Name,Name}
-    cost::Int
+    cost::Float
     function Costs(arc, cost)
         return new(arc, cost)
     end
@@ -450,7 +450,7 @@ mutable struct InfluenceDiagram
     U::AbstractPathUtility
     K::Vector{Tuple{Node,Node}}
     Cost::Vector{AbstractCosts}
-    Cs::Dict{Tuple{Node,Node},Int}
+    Cs::Dict{Tuple{Node,Node},Float}
     translation::Utility
     function InfluenceDiagram()
         new(Vector{AbstractNode}())
