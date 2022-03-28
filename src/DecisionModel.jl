@@ -56,7 +56,7 @@ function path_compatibility_variable(model::Model, base_name::String="")
     return x
 end
 
-function information_structure_variable(model::Model, base_name::String="",is_one::Bool)
+function information_structure_variable(model::Model, base_name::String="",is_one::Bool=false)
     # Create a path compatiblity variable
     x = @variable(model, base_name=base_name, binary=true)
     if is_one
