@@ -56,9 +56,12 @@ function path_compatibility_variable(model::Model, base_name::String="")
     return x
 end
 
-function information_structure_variable(model::Model, base_name::String="")
+function information_structure_variable(model::Model, base_name::String="",is_one::Bool)
     # Create a path compatiblity variable
     x = @variable(model, base_name=base_name, binary=true)
+    if is_one
+        @constraint(model, 0.99 ≤ x ≤ 1.01)
+    end
     return x
 end
 
@@ -225,6 +228,7 @@ function ActiveDecisionPathVariables(model::Model,
     x_s::PathCompatibilityVariables;
     names::Bool=false,
     name::String="x",
+    set_sharing_to_one::Bool=false,
     forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
     fixed::FixedPath=Dict{Node, State}(),
     probability_cut::Bool=true,
@@ -234,7 +238,7 @@ function ActiveDecisionPathVariables(model::Model,
     # Create path compatibility variable for each effective path.
     N = length(diagram.S)
     variables_x = Dict{Tuple{Node,Node}, VariableRef}(
-        s => information_structure_variable(model, (names ? "$(name)$(s)" : ""))
+        s => information_structure_variable(model, (names ? "$(name)$(s)" : ""),set_sharing_to_one)
         for s in diagram.K
     )
 
