@@ -9,7 +9,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     #     println(parents)
     # end
     for s in paths(dims)
-        z_d[s...] = @variable(model, base_name="$(base_name)_$(s)")
+        z_d[s...] = @variable(model, binary=true,base_name="$(base_name)_$(s)")
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
