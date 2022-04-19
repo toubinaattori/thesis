@@ -4,7 +4,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
-    if(augmented_states)
+    if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
         indices_for_Zero_values = []
         for i in K_j
@@ -225,12 +225,14 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
     
     # paths that have a corresponding path compatibility variable
     existing_paths = keys(x_s)
-    indices_k_id = []
     for k in filter(tup -> tup[2] == d, K)
-        append!(indices_k_id,findall(y -> y == k[1] ,I_d))
+        indices = findall(y -> y == k[1] ,I_d)
+        s_d_s_Id = paths(dims,indices)
+        zero = filter(x -> x[indices] == 0, s_d_s_Id)
+        non_zero = filter(x -> x[indices] >= 0, s_d_s_Id)
+        @constraint(model,sum(z[s...] for s in non_zero <= (count(paths(dims,indices))*x_x[k])))
+        @constraint(model,sum(z[s...] for s in zero <= (count(paths(dims,indices))*(1-x_x[k]))))
     end
-    s_d_s_Id = paths(dims,indices_k_id)
-    @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
 end
 
 
