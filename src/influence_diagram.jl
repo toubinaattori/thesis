@@ -207,6 +207,14 @@ function paths(states::AbstractVector{State}, fixed::FixedPath)
     product(iters...)
 end
 
+function paths(states::AbstractVector{State}, indices_for_Zero_values::Array{Int64})
+    ranges = UnitRange.(one(eltype(states)), states)
+    for i in indices_for_Zero_values
+        ranges[i] = 0:last(ranges[i])
+    end
+    product(ranges...)
+end
+
 
 # --- Probabilities ---
 
@@ -448,6 +456,7 @@ mutable struct InfluenceDiagram
     Y::Vector{Utilities}
     P::AbstractPathProbability
     U::AbstractPathUtility
+    Augmented_space::Bool
     K::Vector{Tuple{Node,Node}}
     Cost::Vector{AbstractCosts}
     Cs::Dict{Tuple{Node,Node},Float64}
@@ -912,6 +921,8 @@ function generate_diagram!(diagram::InfluenceDiagram;
     default_utility::Bool=true,
     positive_path_utility::Bool=false,
     negative_path_utility::Bool=false)
+    # Set augmented space for nodes in K to false
+    diagram.Augmented_space = false
     # Sort probabilities and consequences
     sort!(diagram.X, by = x -> x.c)
     sort!(diagram.Y, by = x -> x.v)

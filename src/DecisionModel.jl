@@ -1,15 +1,23 @@
 using JuMP
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode, base_name::String="")
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode, base_name::String="",K::Vector{Tuple{Node,Node}})
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
-    # for a in collect(comibnations(n.A_j))
-    #     parents <- map(x->x.parent,a)
-    #     println(parents)
-    # end
-    for s in paths(dims)
-        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+    if(augmented_states)
+        K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
+        indices_for_Zero_values = []
+        for i in K_j
+            indices = findall(x->x==i, I_d)
+            append!(indices_for_Zero_values,indices)
+        end
+        for s in paths(dims,indices_for_Zero_values)
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+        end
+    else
+        for s in paths(dims)
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+        end
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
@@ -53,6 +61,15 @@ function path_compatibility_variable(model::Model, base_name::String="")
     # Constraint on the lower and upper bounds.
     @constraint(model, 0 ≤ x ≤ 1.0)
 
+    return x
+end
+
+function information_structure_variable(model::Model, base_name::String="",is_one::Bool=false)
+    # Create a path compatiblity variable
+    x = @variable(model, base_name=base_name, binary=true)
+    if is_one
+        @constraint(model, 0.99 ≤ x ≤ 1.01)
+    end
     return x
 end
 
@@ -171,6 +188,51 @@ function PathCompatibilityVariables(model::Model,
 
     x_s
 end
+
+function AugmentedStateVariables(model::Model,
+    diagram::InfluenceDiagram,
+    z::DecisionVariables,
+    x_s::PathCompatibilityVariables;
+    names::Bool=false,
+    name::String="x",
+    forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
+    fixed::FixedPath=Dict{Node, State}(),
+    probability_cut::Bool=true,
+    probability_scale_factor::Float64=1.0)
+
+
+    # Create path compatibility variable for each effective path.
+    N = length(diagram.S)
+    diagram.Augmented_space = true
+
+    variables_x = Dict{Tuple{Node,Node}, VariableRef}(
+        s => information_structure_variable(model, (names ? "$(name)$(s)" : ""))
+        for s in diagram.K
+    )
+
+
+    # Add information constraints for each decision node
+    for (d, z_d) in zip(z.D, z.z)
+        augmented_state_constraints(model, diagram.S, d, diagram.I_j[d], z_d, x_s, diagram.K,variables_x)
+    end
+    return variables_x
+end
+
+function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::Dict{Tuple{Node,Node},VariableRef})
+
+    # states of nodes in information structure (s_d | s_I(d))
+    dims = S[[I_d; d]]
+    
+    # paths that have a corresponding path compatibility variable
+    existing_paths = keys(x_s)
+    indices_k_id = []
+    for k in filter(tup -> tup[2] == d, K)
+        append!(indices_k_id,findall(y -> y == k[1] ,I_d))
+    end
+    s_d_s_Id = paths(dims,indices_k_id)
+    @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
+end
+
 
 function InformationConstraintVariables(model::Model,
     diagram::InfluenceDiagram,
