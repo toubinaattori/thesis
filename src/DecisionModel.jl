@@ -12,11 +12,11 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
             append!(indices_for_Zero_values,indices)
         end
         for s in paths(dims,indices_for_Zero_values)
-            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
         end
     else
         for s in paths(dims)
-            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary = true)
         end
     end
     # Constraints to one decision per decision strategy.
