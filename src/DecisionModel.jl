@@ -1,6 +1,6 @@
 using JuMP
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode, base_name::String="",K::Vector{Tuple{Node,Node}})
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}}, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
@@ -46,7 +46,7 @@ z = DecisionVariables(model, diagram)
 ```
 """
 function DecisionVariables(model::Model, diagram::InfluenceDiagram; names::Bool=false, name::String="z")
-    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
+    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
 function is_forbidden(s::Path, forbidden_paths::Vector{ForbiddenPath})
