@@ -10,7 +10,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
         for i in K_j
             indices = findall(x->x==i, I_d)
             for j in indices
-                append!(indices_for_Zero_values,j)
+                push!(indices_for_Zero_values,j)
             end
         end
         println(indices_for_Zero_values)
