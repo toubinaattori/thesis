@@ -16,7 +16,9 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
         end
     else
         for s in paths(dims)
-            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary = true)
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+            @constraint(model,z_d[s...]<=1)
+            @constraint(model,z_d[s...]>=0)
         end
     end
     # Constraints to one decision per decision strategy.
