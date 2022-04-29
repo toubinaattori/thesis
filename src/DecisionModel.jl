@@ -9,7 +9,9 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
         indices_for_Zero_values = Array{Int16,1}
         for i in K_j
             indices = findall(x->x==i, I_d)
-            append!(indices_for_Zero_values,indices)
+            for j in indices
+                append!(indices_for_Zero_values,j)
+            end
         end
         println(indices_for_Zero_values)
         for s in paths(dims,indices_for_Zero_values)
