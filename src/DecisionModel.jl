@@ -6,7 +6,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     z_d = Array{VariableRef}(undef, dims...)
     if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
-        indices_for_Zero_values = Array{Int16,1}
+        indices_for_Zero_values = []
         for i in K_j
             indices = findall(x->x==i, I_d)
             for j in indices
