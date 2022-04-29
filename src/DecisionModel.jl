@@ -11,6 +11,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
             indices = findall(x->x==i, I_d)
             append!(indices_for_Zero_values,indices)
         end
+        println(indices_for_Zero_values)
         for s in paths(dims,indices_for_Zero_values)
             z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
         end
