@@ -207,7 +207,7 @@ function paths(states::AbstractVector{State}, fixed::FixedPath)
     product(iters...)
 end
 
-function paths(states::AbstractVector{State}, indices_for_Zero_values::Array{Int64})
+function paths(states::AbstractVector{State}, indices_for_Zero_values::Vector{Any})
     ranges = UnitRange.(one(eltype(states)), states)
     for i in indices_for_Zero_values
         ranges[i] = 0:last(ranges[i])
