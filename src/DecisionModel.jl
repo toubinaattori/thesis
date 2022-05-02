@@ -217,7 +217,7 @@ function AugmentedStateVariables(model::Model,
     return variables_x
 end
 
-function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::Dict{Tuple{Node,Node},VariableRef})
+function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vector{Node}, z::Array{VariableRef}, x_s::PathCompatibilityVariables, K::Vector{Tuple{Node,Node}}, x_x::Dict{Tuple{Node,Node},VariableRef})
 
     # states of nodes in information structure (s_d | s_I(d))
     dims = S[[I_d; d]]
