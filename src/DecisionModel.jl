@@ -230,8 +230,8 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
         dims_2 = dims
         dims_2[indices[1]] = dims_2[indices[1]] +1
         s_d_s_Id = paths(dims)
-        zero = filter(x -> x[indices[1]] == dimensions + 1, s_d_s_Id)
-        non_zero = filter(x -> x[indices] < dimensions + 1, s_d_s_Id)
+        zero = Iterators.filter(x -> x[indices[1]] == dimensions + 1, s_d_s_Id)
+        non_zero = Iterators.filter(x -> x[indices] < dimensions + 1, s_d_s_Id)
         @constraint(model,sum(z[s...] for s in non_zero) <= (count(paths(dims,indices))*x_x[k]))
         @constraint(model,sum(z[s...] for s in zero) <= (count(paths(dims,indices))*(1-x_x[k])))
     end
