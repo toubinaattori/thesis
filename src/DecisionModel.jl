@@ -235,6 +235,7 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
         for i in zero
             println(i)
         end
+        println((count(paths(dims_2))))
         @constraint(model,sum(z[s...] for s in non_zero)/(count(paths(dims_2))) <= x_x[k])
         @constraint(model,sum(z[s...] for s in zero)/(count(paths(dims_2))) <= 1-x_x[k])
     end
