@@ -3,7 +3,6 @@ using JuMP
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
-    println(dims)
     z_d = Array{VariableRef}(undef, dims...)
     if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
