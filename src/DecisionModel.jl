@@ -70,14 +70,6 @@ function information_structure_variable(model::Model, base_name::String="",is_on
     return x
 end
 
-function information_structure_variable(model::Model, base_name::String="",is_one::Bool=false)
-    # Create a path compatiblity variable
-    x = @variable(model, base_name=base_name, binary=true)
-    if is_one
-        @constraint(model, 0.99 ≤ x ≤ 1.01)
-    end
-    return x
-end
 
 struct PathCompatibilityVariables{N} <: AbstractDict{Path{N}, VariableRef}
     data::Dict{Path{N}, VariableRef}
@@ -230,8 +222,8 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
         s_d_s_Id = paths(dims)
         zero = Iterators.filter(x -> x[indices[1]] == dimensions + 1, s_d_s_Id)
         non_zero = Iterators.filter(x -> x[indices[1]] < dimensions + 1, s_d_s_Id)
-        @constraint(model,sum(z[s...] for s in non_zero)/(length(paths(dims_2))) <= x_x[k])
-        @constraint(model,sum(z[s...] for s in zero)/(length(paths(dims_2))) <= 1-x_x[k])
+        @constraint(model,sum(z[s...] for s in non_zero)/(length(paths(dims_2))) <= 1-x_x[k])
+        @constraint(model,sum(z[s...] for s in zero)/(length(paths(dims_2))) <= x_x[k])
     end
 end
 
