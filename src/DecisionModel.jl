@@ -88,7 +88,7 @@ Base.iterate(x_s::PathCompatibilityVariables) = iterate(x_s.data)
 Base.iterate(x_s::PathCompatibilityVariables, i) = iterate(x_s.data, i)
 
 
-function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, augmented_state::bool, K::Vector{Tuple{Node,Node}}, z::Array{VariableRef}, x_s::PathCompatibilityVariables)
+function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vector{Node}, D::Vector{Node}, augmented_state::Bool, K::Vector{Tuple{Node,Node}}, z::Array{VariableRef}, x_s::PathCompatibilityVariables)
 
     # states of nodes in information structure (s_d | s_I(d))
     dims = S[[I_d; d]]
@@ -167,16 +167,10 @@ function PathCompatibilityVariables(model::Model,
     end
 
     # Create path compatibility variable for each effective path.
-    states = diagram.S
-    if diagram.Augmented_space
-        indices = unique(map(x -> x[1] , diagram.K))
-        for i in indices
-            states[i] = states[i] + 1
-    end
-    N = length(states)
+    N = length(diagram.S)
     variables_x_s = Dict{Path{N}, VariableRef}(
         s => path_compatibility_variable(model, (names ? "$(name)$(s)" : ""))
-        for s in paths(states, fixed)
+        for s in paths(diagram.S, fixed)
         if !iszero(diagram.P(s)) && !is_forbidden(s, forbidden_paths)
     )
 
