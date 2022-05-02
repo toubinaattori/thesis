@@ -3,7 +3,6 @@ using JuMP
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
-    z_d = Array{VariableRef}(undef, dims...)
     if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
         for i in K_j
@@ -13,6 +12,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
             end
         end
     end
+    z_d = Array{VariableRef}(undef, dims...)
     for s in paths(dims)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
         @constraint(model,z_d[s...]<=1)
