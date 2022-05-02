@@ -227,7 +227,9 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
     for k in filter(tup -> tup[2] == d, K)
         indices = findall(y -> y == k[1] ,I_d)
         dimensions = dims[indices[1]]
-        s_d_s_Id = paths(dims,indices)
+        dims_2 = dims
+        dims_2[indices[1]] = dims_2[indices[1]] +1
+        s_d_s_Id = paths(dims)
         zero = filter(x -> x[indices[1]] == dimensions + 1, s_d_s_Id)
         non_zero = filter(x -> x[indices] < dimensions + 1, s_d_s_Id)
         @constraint(model,sum(z[s...] for s in non_zero) <= (count(paths(dims,indices))*x_x[k]))
