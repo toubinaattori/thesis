@@ -7,25 +7,17 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     z_d = Array{VariableRef}(undef, dims...)
     if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
-        indices_for_Zero_values = []
         for i in K_j
             indices = findall(x->x==i, I_d)
             for j in indices
-                push!(indices_for_Zero_values,j)
+                dims[j] = dims[j] +1
             end
         end
-        println(indices_for_Zero_values)
-        for s in paths(dims,indices_for_Zero_values)
-            println()
-            println(s)
-            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
-        end
-    else
-        for s in paths(dims)
-            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
-            @constraint(model,z_d[s...]<=1)
-            @constraint(model,z_d[s...]>=0)
-        end
+    end
+    for s in paths(dims)
+        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+        @constraint(model,z_d[s...]<=1)
+        @constraint(model,z_d[s...]>=0)
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
