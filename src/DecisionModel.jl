@@ -93,16 +93,6 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
     # states of nodes in information structure (s_d | s_I(d))
     dims = S[[I_d; d]]
 
-    if augmented_states 
-        K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
-        for i in K_j
-            indices = findall(x->x==i, I_d)
-            for j in indices
-                dims[j] = dims[j] +1
-            end
-        end
-    end
-
     # Theoretical upper bound based on number of paths with information structure (s_d | s_I(d)) divided by number of possible decision strategies in other decision nodes
     other_decisions = filter(j -> all(j != d_set for d_set in [I_d; d]), D)
     theoretical_ub = prod(S)/prod(dims)/ prod(S[other_decisions])
