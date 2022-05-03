@@ -13,15 +13,16 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
             end
         end
     end
-    augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
     z_d = Array{VariableRef}(undef, dimensions...)
     for s in paths(dimensions)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
     # Constraints to one decision per decision strategy.
     pop!(dimensions)
-    for s_I in paths(dimensions)
-        @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
+    pop!(dims)
+    augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
+    for s_I in paths(S[I_d])
+        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in augmented_paths) for s_d in 1:S[d]) +  == 1)
     end
     return z_d
 end
