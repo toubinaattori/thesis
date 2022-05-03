@@ -109,7 +109,7 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
                 dimensions[j] = dimensions[j] +1
             end
         end
-        augmented_paths = filter(x -> x ∉ existing_paths, paths(dimensions))
+        augmented_paths = Iterators.filter(x -> x ∉ existing_paths, paths(dimensions))
     end
 
     for s_d_s_Id in paths(dims) # iterate through all information states and states of d
