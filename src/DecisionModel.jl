@@ -14,7 +14,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
         end
     end
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
-    z_d = Array{VariableRef}(undef, dims...)
+    z_d = Array{VariableRef}(undef, dimensions...)
     for s in paths(dimensions)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
