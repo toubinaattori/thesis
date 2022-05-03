@@ -3,21 +3,23 @@ using JuMP
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
+    dimensions = S[[I_d; d]]
     if augmented_states 
         K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
         for i in K_j
             indices = findall(x->x==i, I_d)
             for j in indices
-                dims[j] = dims[j] +1
+                dimensions[j] = dimensions[j] +1
             end
         end
     end
+    augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
     z_d = Array{VariableRef}(undef, dims...)
-    for s in paths(dims)
+    for s in paths(dimensions)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
     # Constraints to one decision per decision strategy.
-    for s_I in paths(S[I_d])
+    for s_I in paths(pop!(dimensions))
         @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
     end
     return z_d
