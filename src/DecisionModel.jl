@@ -116,7 +116,7 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
         # paths with (s_d | s_I(d)) information structure
         feasible_paths = filter(s -> s[[I_d; d]] == s_d_s_Id, existing_paths)
         if augmented_states
-            @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= (z[s_d_s_Id...] + sum(z[s...] for s in augmented_paths) * min(length(feasible_paths), theoretical_ub))
+            @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= (z[s_d_s_Id...] + sum(z[s...] for s in augmented_paths)) * min(length(feasible_paths), theoretical_ub))
         else
             @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= z[s_d_s_Id...] * min(length(feasible_paths), theoretical_ub))
         end
