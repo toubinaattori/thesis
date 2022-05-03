@@ -19,8 +19,8 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
     # Constraints to one decision per decision strategy.
-    println(pop!(dimensions))
-    for s_I in paths(pop!(dimensions))
+    pop!(dimensions)
+    for s_I in paths(dimensions)
         @constraint(model, sum(z_d[s_I..., s_d] for s_d in 1:S[d]) == 1)
     end
     return z_d
