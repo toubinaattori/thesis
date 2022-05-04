@@ -36,9 +36,6 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
     # Constraints to one decision per decision strategy.
-    for i in x_x
-        println(i)
-    end
     pop!(dimensions)
     pop!(dims)
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
@@ -248,19 +245,25 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
 
     # states of nodes in information structure (s_d | s_I(d))
     dims = S[[I_d; d]]
-    
+    dims_3 = S[[I_d; d]]
     # paths that have a corresponding path compatibility variable
-    existing_paths = keys(x_s)
+    existing_paths = paths(dims)
+    K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
+    for i in K_j
+        indices = findall(x->x==i, I_d)
+        for j in indices
+            dims_3[j] = dims_3[j] +1
+        end
+    end
+    augmented_paths = Iterators.filter(x -> x ∉ existing_paths, paths(dims_3))
+
     for k in filter(tup -> tup[2] == d, K)
         indices = findall(y -> y == k[1] ,I_d)
         dimensions = dims[indices[1]]
-        dims_2 = dims
-        dims_2[indices[1]] = dims_2[indices[1]] +1
-        s_d_s_Id = paths(dims)
-        zero = Iterators.filter(x -> x[indices[1]] == dimensions + 1, s_d_s_Id)
-        non_zero = Iterators.filter(x -> x[indices[1]] < dimensions + 1, s_d_s_Id)
-        @constraint(model,sum(z[s...] for s in non_zero)/(length(paths(dims_2))) <= x_x[k])
-        @constraint(model,sum(z[s...] for s in zero)/(length(paths(dims_2))) <= 1-x_x[k])
+        zero = Iterators.filter(x -> x[indices[1]] == dimensions + 1, augmented_paths)
+        non_zero = Iterators.filter(x -> x[indices[1]] < dimensions + 1, existing_paths)
+        @constraint(model,sum(z[s...] for s in non_zero) <= length(paths(dims_2)*x_x[k])
+        @constraint(model,sum(z[s...] for s in zero) <= length(paths(dims_2)*(1-x_x[k]))
     end
 end
 
