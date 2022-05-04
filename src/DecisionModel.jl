@@ -22,12 +22,13 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
     # Create decision variables.
     dims = S[[I_d; d]]
     dimensions = S[[I_d; d]]
+    dimens = Dict{Tuple{Node, Node},Int16}()
     if augmented_states 
-        K_j = map(x -> x[1] , filter(x -> x[2] == d,K))
+        K_j = filter(x -> x[2] == d,K)
         for i in K_j
-            indices = findall(x->x==i, I_d)
-            l = 1
+            indices = findall(x->x==i[1], I_d)
             for j in indices
+                dimens[i] = dims[j]
                 dimensions[j] = dimensions[j] +1
             end
         end
@@ -44,7 +45,7 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
     pop!(dims)
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
     for s_I in paths(S[I_d])
-        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in augmented_paths) for s_d in 1:S[d])  == 1)
+        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in augmented_paths) for s_d in 1:S[d])  == prod(dimens[s]^x_x[s] for s in filter(x -> x[2] == d,K)))
     end
     return z_d
 end
