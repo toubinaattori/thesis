@@ -43,6 +43,7 @@ export Node,
     DecisionStrategy
 
 export DecisionVariables,
+    DecisionVariablesA,
     PathCompatibilityVariables,
     InformationConstraintVariables,
     InformationStructureVariables,
