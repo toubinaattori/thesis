@@ -264,6 +264,7 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
         non_zero = Iterators.filter(x -> x[indices[1]] < dimensions + 1, existing_paths)
         @constraint(model,sum(z[s...] for s in non_zero) <= length(paths(dims_3))*x_x[k])
         @constraint(model,sum(z[s...] for s in zero) <= length(paths(dims_3))*(1-x_x[k]))
+        @constraint(model,sum(z[s...] for s in zero) > x_x[k])
     end
 end
 
