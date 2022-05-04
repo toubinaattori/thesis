@@ -51,7 +51,8 @@ export DecisionVariables,
     ActiveDecisionPathVariables,
     lazy_probability_cut,
     expected_value,
-    conditional_value_at_risk
+    conditional_value_at_risk,
+    information_structure_variable
 
 export random_diagram!,
     random_probabilities!,
