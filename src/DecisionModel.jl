@@ -225,7 +225,7 @@ function AugmentedStateVariables(model::Model,
     diagram::InfluenceDiagram,
     z::DecisionVariables,
     x_s::PathCompatibilityVariables,
-    variables_x::InformationStructureVariables;
+    variables_x::Dict{Tuple{Int16, Int16}, VariableRef};
     names::Bool=false,
     name::String="x",
     forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
