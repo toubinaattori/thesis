@@ -18,7 +18,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     return z_d
 end
 
-function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,x_x::InformationStructureVariables, base_name::String="")
+function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,x_x::Dict{Tuple{Node, Node}, VariableRef}, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     dimensions = S[[I_d; d]]
@@ -72,7 +72,7 @@ function DecisionVariables(model::Model, diagram::InfluenceDiagram; names::Bool=
     DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
-function DecisionVariablesA(model::Model, diagram::InfluenceDiagram, x_x::InformationStructureVariables; names::Bool=false, name::String="z")
+function DecisionVariablesA(model::Model, diagram::InfluenceDiagram, x_x::Dict{Tuple{Node, Node}, VariableRef}; names::Bool=false, name::String="z")
     DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variableA(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space,x_x, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
