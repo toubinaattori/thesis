@@ -40,7 +40,7 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
     pop!(dims)
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
     for s_I in paths(S[I_d])
-        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in augmented_paths) for s_d in 1:S[d])  == 1)
+        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in augmented_paths) for s_d in 1:S[d])  == 2)
     end
     return z_d
 end
@@ -264,7 +264,6 @@ function augmented_state_constraints(model::Model, S::States, d::Node, I_d::Vect
         non_zero = Iterators.filter(x -> x[indices[1]] < dimensions + 1, existing_paths)
         @constraint(model,sum(z[s...] for s in non_zero) <= length(paths(dims_3))*x_x[k])
         @constraint(model,sum(z[s...] for s in zero) <= length(paths(dims_3))*(1-x_x[k]))
-        @constraint(model,sum(z[s...] for s in zero) > x_x[k])
     end
 end
 
