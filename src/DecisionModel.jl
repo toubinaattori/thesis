@@ -1,5 +1,9 @@
 using JuMP
 
+struct InformationStructureVariables{N} <: AbstractDict{Tuple{Node,Node}, VariableRef}
+    data::Dict{Tuple{Node,Node}, VariableRef}
+end
+
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
@@ -100,9 +104,7 @@ end
 struct PathCompatibilityVariables{N} <: AbstractDict{Path{N}, VariableRef}
     data::Dict{Path{N}, VariableRef}
 end
-struct InformationStructureVariables{N} <: AbstractDict{Tuple{Node,Node}, VariableRef}
-    data::Dict{Tuple{Node,Node}, VariableRef}
-end
+
 
 Base.length(x_s::PathCompatibilityVariables) = length(x_s.data)
 Base.getindex(x_s::PathCompatibilityVariables, key) = getindex(x_s.data, key)
