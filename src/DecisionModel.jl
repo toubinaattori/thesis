@@ -22,13 +22,11 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
     # Create decision variables.
     dims = S[[I_d; d]]
     dimensions = S[[I_d; d]]
-    dimens = Dict{Tuple{Node, Node},Int16}()
     if augmented_states 
         K_j = filter(x -> x[2] == d,K)
         for i in K_j
             indices = findall(x->x==i[1], I_d)
             for j in indices
-                dimens[i] = dims[j]
                 dimensions[j] = dimensions[j] +1
             end
         end
