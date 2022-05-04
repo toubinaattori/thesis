@@ -224,7 +224,7 @@ end
 function AugmentedStateVariables(model::Model,
     diagram::InfluenceDiagram,
     z::DecisionVariables,
-    x_s::PathCompatibilityVariables;
+    x_s::PathCompatibilityVariables,
     variables_x::InformationStructureVariables;
     names::Bool=false,
     name::String="x",
