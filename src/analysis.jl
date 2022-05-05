@@ -57,7 +57,7 @@ function Base.iterate(S_Z::CompatiblePaths)
         for i in S_Z.K
             println(i)
             println(S_Z.S[i])
-            S_Z.S[i] = S_Z.S[i] + 1 
+            S_Z.S.vals[i] = S_Z.S[i] + 1 
         end
     end
     println("lakial")
