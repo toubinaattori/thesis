@@ -53,6 +53,7 @@ end
 
 function Base.iterate(S_Z::CompatiblePaths)
     if S_Z.is_augmented
+        println(S_Z.S)
         for i in S_Z.K
             S_Z.S[i] = S_Z.S[i] + 1 
         end
