@@ -44,6 +44,9 @@ function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::P
         s[c] = s_C_j
     end
     for (d, I_d, Z_d) in zip(Z.D, Z.I_d, Z.Z_d)
+        println(Z.I_d)
+        println(d)
+        println(Z.Z_d)
         s[d] = Z_d((s[I_d]...,))
     end
     return (s...,)
@@ -60,9 +63,6 @@ function Base.iterate(S_Z::CompatiblePaths)
     next = iterate(iter)
     if next !== nothing
         s_C, state = next
-        println(state)
-        println(iter)
-        println("----------")
         return (compatible_path(S_Z.S, S_Z.C, S_Z.Z, s_C), (iter, state))
     end
 end
