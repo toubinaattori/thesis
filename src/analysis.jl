@@ -39,6 +39,7 @@ function CompatiblePaths(diagram::InfluenceDiagram, Z::DecisionStrategy, fixed::
 end
 
 function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::Path)
+    println("shit")
     s = Array{State}(undef, length(S))
     for (c, s_C_j) in zip(C, s_C)
         s[c] = s_C_j
