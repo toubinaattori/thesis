@@ -49,7 +49,6 @@ function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::P
 end
 
 function Base.iterate(S_Z::CompatiblePaths)
-    println("---------now we here---------")
     if isempty(S_Z.fixed)
         iter = paths(S_Z.S[S_Z.C])
     else
@@ -57,6 +56,7 @@ function Base.iterate(S_Z::CompatiblePaths)
         fixed = Dict{Node, State}(Node(i) => S_Z.fixed[k] for (i, k) in enumerate(S_Z.C) if k in ks)
         iter = paths(S_Z.S[S_Z.C], fixed)
     end
+    println(iter)
     next = iterate(iter)
     if next !== nothing
         s_C, state = next
