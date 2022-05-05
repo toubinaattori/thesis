@@ -46,7 +46,7 @@ function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::P
     for (d, I_d, Z_d) in zip(Z.D, Z.I_d, Z.Z_d)
         println(Z.I_d)
         println(d)
-        println(Z.Z_d)
+        println(Z_d((s[I_d]...,)))
         s[d] = Z_d((s[I_d]...,))
     end
     return (s...,)
