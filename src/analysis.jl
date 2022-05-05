@@ -56,6 +56,7 @@ function Base.iterate(S_Z::CompatiblePaths)
         println(S_Z.S)
         for i in S_Z.K
             println(i)
+            println(S_Z.S[i])
             S_Z.S[i] = S_Z.S[i] + 1 
         end
     end
