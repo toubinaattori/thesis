@@ -142,12 +142,14 @@ function CompatiblePathsAugmented(diagram::InfluenceDiagram, Z::DecisionStrategy
     augmented_paths = Iterators.filter(x -> x ∉ existing_paths,paths(states))
 end
 
-function UtilityDistributionWithAugmentedStates(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x::Dict{Tuple{Node,Node},VariableRef})
+function UtilityDistributionWithAugmentedStates(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x::Dict{Tuple{Node,Node},VariableRef}, x_s::PathCompatibilityVariables)
     # Extract utilities and probabilities of active paths
-    S_S = CompatiblePathsAugmented(diagram, Z)
-    utilities = Vector{Float64}(undef, length(S_Z))
-    probabilities = Vector{Float64}(undef, length(S_Z))
-    for (i, s) in enumerate(S_S)
+    compatible_paths = Iterators.filter(x -> value.(x)>=0.5,x_s)
+    compatible_paths = keys(compatible_paths)
+    println(compatible_paths)
+    utilities = Vector{Float64}(undef, length(compatible_paths))
+    probabilities = Vector{Float64}(undef, length(compatible_paths))
+    for (i, s) in enumerate(compatible_paths)
         utilities[i] = diagram.U(s) - sum(diagram.Cs[c] * value.(x_x[c]) for c in keys(x_x))
         probabilities[i] = diagram.P(s)
     end
