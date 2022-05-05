@@ -144,8 +144,7 @@ end
 
 function UtilityDistributionWithAugmentedStates(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x::Dict{Tuple{Node,Node},VariableRef}, x_s::PathCompatibilityVariables)
     # Extract utilities and probabilities of active paths
-    compatible_paths = Iterators.filter(x -> value.(x)>=0.5,x_s)
-    compatible_paths = keys(compatible_paths)
+    compatible_paths = filter(x -> value.(x_s[x]) >= 0.5,keys(x_s))
     println(compatible_paths)
     utilities = Vector{Float64}(undef, length(compatible_paths))
     probabilities = Vector{Float64}(undef, length(compatible_paths))
