@@ -100,6 +100,8 @@ function UtilityDistribution(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x
     S_Z = CompatiblePaths(diagram, Z)
     println(diagram.S)
     println(diagram.C)
+    println(Z)
+    println(S_Z)
     utilities = Vector{Float64}(undef, length(S_Z))
     probabilities = Vector{Float64}(undef, length(S_Z))
     for (i, s) in enumerate(S_Z)
