@@ -47,10 +47,16 @@ function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::P
     for (d, I_d, Z_d) in zip(Z.D, Z.I_d, Z.Z_d)
         s[d] = Z_d((s[I_d]...,))
     end
+    println(s)
     return (s...,)
 end
 
 function Base.iterate(S_Z::CompatiblePaths)
+    if S_Z.is_augmented
+        for i in S_Z.K
+            S_Z.States[i] = S_Z.States[i] + 1 
+        end
+    end
     if isempty(S_Z.fixed)
         iter = paths(S_Z.S[S_Z.C])
     else
