@@ -54,7 +54,7 @@ end
 function Base.iterate(S_Z::CompatiblePaths)
     if S_Z.is_augmented
         for i in S_Z.K
-            S_Z.States[i] = S_Z.States[i] + 1 
+            S_Z.S[i] = S_Z.S[i] + 1 
         end
     end
     if isempty(S_Z.fixed)
