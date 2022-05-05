@@ -60,7 +60,9 @@ export random_diagram!,
     LocalDecisionStrategy
 
 export CompatiblePaths,
+    CompatiblePathsAugmented,
     UtilityDistribution,
+    UtilityDistributionWithAugmentedStates,
     StateProbabilities,
     value_at_risk,
     conditional_value_at_risk

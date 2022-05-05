@@ -10,15 +10,13 @@ CompatiblePaths type.
 struct CompatiblePaths
     S::States
     C::Vector{Node}
-    K::Vector{Node}
     Z::DecisionStrategy
-    is_augmented::Bool
     fixed::FixedPath
-    function CompatiblePaths(S, C, K,Z, is_augmented, fixed)
+    function CompatiblePaths(S, C,Z, fixed)
         if !all(k∈Set(C) for k in keys(fixed))
             throw(DomainError("You can only fix chance states."))
         end
-        new(S, C, K, Z, is_augmented, fixed)
+        new(S, C, Z, fixed)
     end
 end
 
@@ -36,7 +34,7 @@ end
 ```
 """
 function CompatiblePaths(diagram::InfluenceDiagram, Z::DecisionStrategy, fixed::FixedPath=Dict{Node, State}())
-    CompatiblePaths(diagram.S, diagram.C,unique(map(x -> x[1] , diagram.K)), Z, diagram.Augmented_space, fixed)
+    CompatiblePaths(diagram.S, diagram.C, Z, fixed)
 end
 
 function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::Path)
@@ -51,11 +49,6 @@ function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::P
 end
 
 function Base.iterate(S_Z::CompatiblePaths)
-    if S_Z.is_augmented
-        for i in S_Z.K
-            S_Z.S.vals[i] = S_Z.S[i] + 1 
-        end
-    end
     if isempty(S_Z.fixed)
         iter = paths(S_Z.S[S_Z.C])
     else
@@ -108,9 +101,55 @@ function UtilityDistribution(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x
     utilities = Vector{Float64}(undef, length(S_Z))
     probabilities = Vector{Float64}(undef, length(S_Z))
     for (i, s) in enumerate(S_Z)
-        println(s)
-        #utilities[i] = diagram.U(s) - sum(diagram.Cs[c] * value.(x_x[c]) for c in keys(x_x))
-        #probabilities[i] = diagram.P(s)
+        utilities[i] = diagram.U(s) - sum(diagram.Cs[c] * value.(x_x[c]) for c in keys(x_x))
+        probabilities[i] = diagram.P(s)
+    end
+
+    # Filter zero probabilities
+    nonzero = @. (!)(iszero(probabilities))
+    utilities = utilities[nonzero]
+    probabilities = probabilities[nonzero]
+
+    # Sort by utilities
+    perm = sortperm(utilities)
+    u = utilities[perm]
+    p = probabilities[perm]
+
+    # Compute the probability mass function
+    u2 = unique(u)
+    p2 = similar(u2)
+    j = 1
+    p2[j] = p[1]
+    for k in 2:length(u)
+        if u[k] == u2[j]
+            p2[j] += p[k]
+        else
+            j += 1
+            p2[j] = p[k]
+        end
+    end
+
+    UtilityDistribution(u2, p2)
+end
+
+function CompatiblePathsAugmented(diagram::InfluenceDiagram, Z::DecisionStrategy, fixed::FixedPath=Dict{Node, State}())
+    states = diagram.S
+    K = unique(map(x -> x[1],diagram.K))
+    existing_paths = paths(states)
+    for i in K
+        states.vals[i] = states.vals[i] + 1
+    end
+    augmented_paths = Iterators.filter(x -> x ∉ existing_paths,paths(states))
+end
+
+function UtilityDistributionWithAugmentedStates(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x::Dict{Tuple{Node,Node},VariableRef})
+    # Extract utilities and probabilities of active paths
+    S_S = CompatiblePathsAugmented(diagram, Z)
+    utilities = Vector{Float64}(undef, length(S_Z))
+    probabilities = Vector{Float64}(undef, length(S_Z))
+    for (i, s) in enumerate(S_S)
+        utilities[i] = diagram.U(s) - sum(diagram.Cs[c] * value.(x_x[c]) for c in keys(x_x))
+        probabilities[i] = diagram.P(s)
     end
 
     # Filter zero probabilities
