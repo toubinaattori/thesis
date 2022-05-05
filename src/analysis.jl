@@ -11,12 +11,13 @@ struct CompatiblePaths
     S::States
     C::Vector{Node}
     Z::DecisionStrategy
+    is_augmented::Bool
     fixed::FixedPath
-    function CompatiblePaths(S, C, Z, fixed)
+    function CompatiblePaths(S, C, Z, is_augmented, fixed)
         if !all(k∈Set(C) for k in keys(fixed))
             throw(DomainError("You can only fix chance states."))
         end
-        new(S, C, Z, fixed)
+        new(S, C, Z, is_augmented, fixed)
     end
 end
 
@@ -34,7 +35,7 @@ end
 ```
 """
 function CompatiblePaths(diagram::InfluenceDiagram, Z::DecisionStrategy, fixed::FixedPath=Dict{Node, State}())
-    CompatiblePaths(diagram.S, diagram.C, Z, fixed)
+    CompatiblePaths(diagram.S, diagram.C, diagram.Augmented_space, Z, fixed)
 end
 
 function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::Path)
@@ -56,10 +57,12 @@ function Base.iterate(S_Z::CompatiblePaths)
         fixed = Dict{Node, State}(Node(i) => S_Z.fixed[k] for (i, k) in enumerate(S_Z.C) if k in ks)
         iter = paths(S_Z.S[S_Z.C], fixed)
     end
-    println(iter)
     next = iterate(iter)
     if next !== nothing
         s_C, state = next
+        println(state)
+        println(iter)
+        println("----------")
         return (compatible_path(S_Z.S, S_Z.C, S_Z.Z, s_C), (iter, state))
     end
 end
@@ -99,17 +102,9 @@ UtilityDistribution(diagram, Z)
 function UtilityDistribution(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x::Dict{Tuple{Node,Node},VariableRef})
     # Extract utilities and probabilities of active paths
     S_Z = CompatiblePaths(diagram, Z)
-    println(diagram.S)
-    println(diagram.C)
-    println(Z)
-    for i in S_Z
-        println(i)
-    end
     utilities = Vector{Float64}(undef, length(S_Z))
     probabilities = Vector{Float64}(undef, length(S_Z))
     for (i, s) in enumerate(S_Z)
-        println(s)
-        println(diagram.U(s))
         utilities[i] = diagram.U(s) - sum(diagram.Cs[c] * value.(x_x[c]) for c in keys(x_x))
         probabilities[i] = diagram.P(s)
     end
