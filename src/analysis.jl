@@ -101,7 +101,9 @@ function UtilityDistribution(diagram::InfluenceDiagram, Z::DecisionStrategy, x_x
     println(diagram.S)
     println(diagram.C)
     println(Z)
-    println(S_Z)
+    for i in S_Z
+        println(i)
+    end
     utilities = Vector{Float64}(undef, length(S_Z))
     probabilities = Vector{Float64}(undef, length(S_Z))
     for (i, s) in enumerate(S_Z)
