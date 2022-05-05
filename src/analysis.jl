@@ -60,6 +60,7 @@ function Base.iterate(S_Z::CompatiblePaths)
             S_Z.S[i] = S_Z.S[i] + 1 
         end
     end
+    println("lakial")
     if isempty(S_Z.fixed)
         iter = paths(S_Z.S[S_Z.C])
     else
