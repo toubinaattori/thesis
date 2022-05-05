@@ -10,14 +10,15 @@ CompatiblePaths type.
 struct CompatiblePaths
     S::States
     C::Vector{Node}
+    K::Vector{Node}
     Z::DecisionStrategy
     is_augmented::Bool
     fixed::FixedPath
-    function CompatiblePaths(S, C, Z, is_augmented, fixed)
+    function CompatiblePaths(S, C, K,Z, is_augmented, fixed)
         if !all(k∈Set(C) for k in keys(fixed))
             throw(DomainError("You can only fix chance states."))
         end
-        new(S, C, Z, is_augmented, fixed)
+        new(S, C, K, Z, is_augmented, fixed)
     end
 end
 
@@ -35,22 +36,17 @@ end
 ```
 """
 function CompatiblePaths(diagram::InfluenceDiagram, Z::DecisionStrategy, fixed::FixedPath=Dict{Node, State}())
-    CompatiblePaths(diagram.S, diagram.C, Z, diagram.Augmented_space, fixed)
+    CompatiblePaths(diagram.S, diagram.C,unique(map(x -> x[1] , diagram.K)), Z, diagram.Augmented_space, fixed)
 end
 
 function compatible_path(S::States, C::Vector{Node}, Z::DecisionStrategy, s_C::Path)
-    println("shit")
     s = Array{State}(undef, length(S))
     for (c, s_C_j) in zip(C, s_C)
         s[c] = s_C_j
     end
     for (d, I_d, Z_d) in zip(Z.D, Z.I_d, Z.Z_d)
-        println(Z.I_d)
-        println(d)
-        println(Z_d((s[I_d]...,)))
         s[d] = Z_d((s[I_d]...,))
     end
-    println(s)
     return (s...,)
 end
 
