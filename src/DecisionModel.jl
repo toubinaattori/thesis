@@ -41,7 +41,7 @@ function decision_variableA(model::Model, S::States, d::Node, I_d::Vector{Node},
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
     for s_I in paths(S[I_d])
         feasible_augmented_paths = Iterators.filter(s -> all((s_I.==s) .| (s .== (dims .+ 1))),augmented_paths)
-        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in feasible_augmented_paths) for s_d in 1:S[d])  == 1)
+        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in feasible_augmented_paths) for s_d in 1:S[d])  <= 1)
     end
     return z_d
 end
