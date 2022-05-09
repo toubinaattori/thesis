@@ -7,7 +7,7 @@ end
 function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
-    z_d = Array{VariableRef}(undef, dimendimssions...)
+    z_d = Array{VariableRef}(undef, dims...)
     for s in paths(dims)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary=true)
     end
