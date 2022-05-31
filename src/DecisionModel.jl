@@ -81,6 +81,14 @@ function is_forbidden(s::Path, forbidden_paths::Vector{ForbiddenPath})
     return !all(s[k]∉v for (k, v) in forbidden_paths)
 end
 
+function InformationStructureVariables(model::Model, diagram::InfluenceDiagram)
+    x_x = Dict{Tuple{Node,Node}, VariableRef}(
+        s => information_structure_variable(model, "x")
+        for s in diagram.K
+    )
+    return x_x
+end
+
 
 function path_compatibility_variable(model::Model, base_name::String="")
     # Create a path compatiblity variable
