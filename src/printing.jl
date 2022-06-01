@@ -18,11 +18,28 @@ function print_decision_strategy(diagram::InfluenceDiagram, Z::DecisionStrategy,
     probs = state_probabilities.probs
 
     for (d, I_d, Z_d) in zip(Z.D, Z.I_d, Z.Z_d)
-        s_I = vec(collect(paths(diagram.S[I_d])))
+        if diagram.Augmented_space
+            K_j = filter(x -> x ∈ I_d ,map(x -> x[1] , filter(x -> x[2] == d,diagram.K)))
+            states = diagram.S[I_d]
+            j = 1
+            for i in I_d
+                if i ∈ K_j
+                    states[j] = states[j] + 1
+                end
+                j = j+ 1
+            end
+            s_I = vec(collect(paths(states)))
+        else
+            s_I = vec(collect(paths(diagram.S[I_d])))
+        end
         s_d = [Z_d(s) for s in s_I]
 
         if !isempty(I_d)
-            informations_states = [join([String(diagram.States[i][s_i]) for (i, s_i) in zip(I_d, s)], ", ") for s in s_I]
+            if diagram.Augmented_space
+                informations_states = [join([(s_i > diagram.S[i] ? "0" : String(diagram.States[i][s_i])) for (i, s_i) in zip(I_d, s)], ", ") for s in s_I]
+            else
+                informations_states = [join([String(diagram.States[i][s_i]) for (i, s_i) in zip(I_d, s)], ", ") for s in s_I]
+            end
             decision_probs = [ceil(prod(probs[i][s1] for (i, s1) in zip(I_d, s))) for s in s_I]
             decisions = collect(p == 0 ? "--" : diagram.States[d][s] for (s, p) in zip(s_d, decision_probs))
             df = DataFrame(informations_states = informations_states, decisions = decisions)
