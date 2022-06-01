@@ -37,10 +37,12 @@ function print_decision_strategy(diagram::InfluenceDiagram, Z::DecisionStrategy,
         if !isempty(I_d)
             if diagram.Augmented_space
                 informations_states = [join([(s_i > diagram.S[i] ? "0" : String(diagram.States[i][s_i])) for (i, s_i) in zip(I_d, s)], ", ") for s in s_I]
+                decision_probs = [ceil(prod(s1 > diagram.S[i] ? sum(probs[i]) : probs[i][s1] for (i, s1) in zip(I_d, s))) for s in s_I]
+
             else
                 informations_states = [join([String(diagram.States[i][s_i]) for (i, s_i) in zip(I_d, s)], ", ") for s in s_I]
+                decision_probs = [ceil(prod(probs[i][s1] for (i, s1) in zip(I_d, s))) for s in s_I]
             end
-            decision_probs = [ceil(prod(probs[i][s1] for (i, s1) in zip(I_d, s))) for s in s_I]
             decisions = collect(p == 0 ? "--" : diagram.States[d][s] for (s, p) in zip(s_d, decision_probs))
             df = DataFrame(informations_states = informations_states, decisions = decisions)
             if !show_incompatible_states
