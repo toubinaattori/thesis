@@ -9,8 +9,8 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
     for s in paths(dims)
-        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
-        @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
+        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)", binary = true)
+        #@constraint(model,0 ≤ z_d[s...] ≤ 1.0)
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
@@ -149,10 +149,7 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
 
     for s_d_s_Id in paths(dims) # iterate through all information states and states of d
         # paths with (s_d | s_I(d)) information structure
-        println(existing_paths)
-        println(s_d_s_Id)
         feasible_paths = filter(s -> s[[I_d; d]] == s_d_s_Id, existing_paths)
-        println(feasible_paths)
         if augmented_states
             feasible_augmented_paths = Iterators.filter(s -> all((s_d_s_Id.==s) .| (s .== (dims .+ 1))),augmented_paths)
             @constraint(model, sum(get(x_s, s, 0) for s in feasible_paths) <= (z[s_d_s_Id...] + sum(z[s...] for s in feasible_augmented_paths)) * min(length(feasible_paths), theoretical_ub))
