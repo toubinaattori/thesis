@@ -9,7 +9,7 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
     for s in paths(dims)
-        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary = true)
+        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
         @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
     end
     # Constraints to one decision per decision strategy.
