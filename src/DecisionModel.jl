@@ -4,7 +4,7 @@ struct InformationStructureVariables{N} <: AbstractDict{Tuple{Node,Node}, Variab
     data::Dict{Tuple{Node,Node}, VariableRef}
 end
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,binary::Bool base_name::String="")
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,binary::Bool, base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
