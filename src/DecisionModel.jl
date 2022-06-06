@@ -92,12 +92,12 @@ function InformationStructureVariables(model::Model, diagram::InfluenceDiagram)
 end
 
 
-function path_compatibility_variable(model::Model, base_name::String="")
+function path_compatibility_variable(model::Model, base_name::String="", p_s::Float64)
     # Create a path compatiblity variable
     x = @variable(model, base_name=base_name)
 
     # Constraint on the lower and upper bounds.
-    @constraint(model, 0 ≤ x ≤ 1.0)
+    @constraint(model, 0 ≤ x ≤ p_s)
 
     return x
 end
@@ -218,7 +218,7 @@ function PathCompatibilityVariables(model::Model,
     # Create path compatibility variable for each effective path.
     N = length(diagram.S)
     variables_x_s = Dict{Path{N}, VariableRef}(
-        s => path_compatibility_variable(model, (names ? "$(name)$(s)" : ""))
+        s => path_compatibility_variable(model, (names ? "$(name)$(s)" : ""), diagram.P(s))
         for s in paths(diagram.S, fixed)
         if !iszero(diagram.P(s)) && !is_forbidden(s, forbidden_paths)
     )
@@ -430,7 +430,7 @@ function expected_value(model::Model,
     diagram::InfluenceDiagram,
     x_s::PathCompatibilityVariables,
     x_x::Dict{Tuple{Node,Node},VariableRef})
-    @expression(model, sum(diagram.P(s) * x * diagram.U(s, diagram.translation) for (s, x) in x_s) - sum(diagram.Cs[k] * x for (k,x) in x_x )+ sum(0.000001 * x for (k,x) in x_x ))
+    @expression(model, sum(x * diagram.U(s, diagram.translation) for (s, x) in x_s) - sum(diagram.Cs[k] * x for (k,x) in x_x )+ sum(0.000001 * x for (k,x) in x_x ))
 end
 
 """
