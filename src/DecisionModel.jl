@@ -71,7 +71,7 @@ Create decision variables and constraints.
 z = DecisionVariables(model, diagram)
 ```
 """
-function DecisionVariables(model::Model, diagram::InfluenceDiagram;binary::Bool=false names::Bool=false, name::String="z")
+function DecisionVariables(model::Model, diagram::InfluenceDiagram;binary::Bool=false, names::Bool=false, name::String="z")
     DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space,binary, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
