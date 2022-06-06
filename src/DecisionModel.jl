@@ -4,13 +4,17 @@ struct InformationStructureVariables{N} <: AbstractDict{Tuple{Node,Node}, Variab
     data::Dict{Tuple{Node,Node}, VariableRef}
 end
 
-function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, base_name::String="")
+function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,binary::Bool base_name::String="")
     # Create decision variables.
     dims = S[[I_d; d]]
     z_d = Array{VariableRef}(undef, dims...)
     for s in paths(dims)
-        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
-        @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
+        if binary
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary = true)
+        else
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+            @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
+        end
     end
     # Constraints to one decision per decision strategy.
     for s_I in paths(S[I_d])
@@ -67,8 +71,8 @@ Create decision variables and constraints.
 z = DecisionVariables(model, diagram)
 ```
 """
-function DecisionVariables(model::Model, diagram::InfluenceDiagram; names::Bool=false, name::String="z")
-    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
+function DecisionVariables(model::Model, diagram::InfluenceDiagram;binary::Bool=false names::Bool=false, name::String="z")
+    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space,binary, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
 function DecisionVariablesAugmented(model::Model, diagram::InfluenceDiagram, x_x::Dict{Tuple{Node, Node}, VariableRef}; names::Bool=false, name::String="z")
