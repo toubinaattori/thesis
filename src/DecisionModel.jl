@@ -162,6 +162,7 @@ function decision_strategy_constraint(model::Model, S::States, d::Node, I_d::Vec
         else
             for s in feasible_paths
                 @constraint(model, get(x_s, s, 0)<= z[s_d_s_Id...])
+                @constraint(model, z[s_d_s_Id...] <= get(x_s, s, 0)*1000)
             end
         end
     end
