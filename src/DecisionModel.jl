@@ -215,7 +215,7 @@ function PathCompatibilityVariables(model::Model,
         @warn("Forbidden paths is still an experimental feature.")
     end
 
-    Create path compatibility variable for each effective path.
+    # Create path compatibility variable for each effective path.
     N = length(diagram.S)
     variables_x_s = Dict{Path{N}, VariableRef}(
         s => path_compatibility_variable(model, diagram.P(s), (names ? "$(name)$(s)" : ""))
@@ -223,7 +223,7 @@ function PathCompatibilityVariables(model::Model,
         if !iszero(diagram.P(s)) && !is_forbidden(s, forbidden_paths)
     )
 
-     x_s = PathCompatibilityVariables{N}(variables_x_s)
+    x_s = PathCompatibilityVariables{N}(variables_x_s)
 
     # Add decision strategy constraints for each decision node
     for (d, z_d) in zip(z.D, z.z)
@@ -430,7 +430,7 @@ function expected_value(model::Model,
     x_s::PathCompatibilityVariables,
     x_x::Dict{Tuple{Node,Node},VariableRef},
     z::DecisionVariables)
-    @expression(model, sum(prod(z_d[s[[Int64(diagram.I_j[d]...),Int64(d)]...]] for (d,z_d) in zip(z.D,z.z)) * diagram.U(s, diagram.translation) * diagram.P(s)  for (s, x) in x_s) - sum(diagram.Cs[k] * x for (k,x) in x_x )+ sum(0.000001 * x for (k,x) in x_x ))
+    @expression(model, sum(x * diagram.U(s, diagram.translation)  for (s, x) in x_s) - sum(diagram.Cs[k] * x for (k,x) in x_x )+ sum(0.000001 * x for (k,x) in x_x ))
 end
 
 """
