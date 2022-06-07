@@ -379,7 +379,6 @@ function decision_path_constraints(model::Model, S::States, d::Node, I_d::Vector
             for s_d_s_k in paths(dims)
                 if s_d_s_k[first(k_index)] != s_d_s_Id[first(k_index)] && s_d_s_k[Id_without_k] == s_d_s_Id[Id_without_k] && last(s_d_s_k) == last(s_d_s_Id)
                     @constraint(model, z[s_d_s_k...]  >=   z[s_d_s_Id...] - x_x[k])
-                    @constraint(model, z[s_d_s_Id...]  >=   z[s_d_s_k...] - x_x[k])
                 end
             end 
         end
