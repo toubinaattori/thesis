@@ -533,5 +533,3 @@ Z = DecisionStrategy(z)
 function DecisionStrategy(z::DecisionVariables)
     DecisionStrategy(z.D, z.I_d, [LocalDecisionStrategy(d, z_var) for (d, z_var) in zip(z.D, z.z)])
 end
-
-function BranchAndBound()
