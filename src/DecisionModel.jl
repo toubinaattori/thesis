@@ -161,7 +161,7 @@ function decision_strategy_constraint(model::Model,diagram::InfluenceDiagram, S:
             end
         else
             for s in feasible_paths
-                @constraint(model, get(x_s, s, 0)<= z[s_d_s_Id...] * diagram.P(s))
+                @constraint(model, get(x_s, s, 0)== z[s_d_s_Id...] * diagram.P(s))
             end
         end
     end
