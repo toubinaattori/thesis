@@ -161,7 +161,7 @@ function decision_strategy_constraint(model::Model,diagram::InfluenceDiagram, S:
             end
         else
             for s in feasible_paths
-                @constraint(model, get(x_s, s, 0)<= z[s_d_s_Id...])
+                @constraint(model, get(x_s, s, 0)<= z[s_d_s_Id...] * diagram.P(s))
             end
         end
     end
@@ -533,3 +533,5 @@ Z = DecisionStrategy(z)
 function DecisionStrategy(z::DecisionVariables)
     DecisionStrategy(z.D, z.I_d, [LocalDecisionStrategy(d, z_var) for (d, z_var) in zip(z.D, z.z)])
 end
+
+function BranchAndBound()
