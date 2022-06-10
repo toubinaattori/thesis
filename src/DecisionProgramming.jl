@@ -54,7 +54,7 @@ export DecisionVariables,
     expected_value,
     conditional_value_at_risk,
     information_structure_variable,
-    extensions!
+    extension
 
 export random_diagram!,
     random_probabilities!,
