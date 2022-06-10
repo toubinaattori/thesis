@@ -18,7 +18,6 @@ export Node,
     States,
     Path,
     paths,
-    extensions!,
     ForbiddenPath,
     FixedPath,
     Probabilities,
@@ -54,7 +53,8 @@ export DecisionVariables,
     lazy_probability_cut,
     expected_value,
     conditional_value_at_risk,
-    information_structure_variable
+    information_structure_variable,
+    extensions!
 
 export random_diagram!,
     random_probabilities!,
