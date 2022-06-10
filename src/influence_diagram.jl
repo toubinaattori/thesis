@@ -182,6 +182,10 @@ function paths(states::AbstractVector{State})
     product(UnitRange.(one(eltype(states)), states)...)
 end
 
+function paths!(states::AbstractVector{State})
+    product(UnitRange.(one(eltype(states)), states)...)
+end
+
 
 """
     function paths(states::AbstractVector{State}, fixed::FixedPath)
