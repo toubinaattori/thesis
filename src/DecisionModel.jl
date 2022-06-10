@@ -338,8 +338,7 @@ function information_constraints(model::Model, S::States, d::Node, I_d::Vector{N
     end
 end
 
-function extensions!(diagram::InfluenceDiagram, path_segment::Vector{Int16},nodes::Vector{Int16})
-    paths = paths(diagram.S)
+function extension(paths::Vector{Path}, path_segment::Vector{Int16},nodes::Vector{Int16})
     extensions = filter(path -> path[nodes] == Tuple(path_segment),paths)
     extensions
 end
