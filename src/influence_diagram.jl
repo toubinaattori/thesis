@@ -215,6 +215,12 @@ function paths(states::AbstractVector{State}, indices_for_Zero_values::Vector{An
     product(ranges...)
 end
 
+function extension(diagram::InfluenceDiagram, path_segment::Array{Int16},nodes::Array{Node})
+    paths = paths(diagram.S)
+    extensions = filter(path -> path[nodes] == path_segment,paths)
+    extensions
+end
+
 
 # --- Probabilities ---
 
