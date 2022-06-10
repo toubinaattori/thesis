@@ -466,9 +466,9 @@ mutable struct InfluenceDiagram
     end
 end
 
-function extension(diagram::InfluenceDiagram, path_segment::Array{Int16},nodes::Array{Node})
+function extensions(diagram::InfluenceDiagram, path_segment::Vector{Int64},nodes::Vector{Int64})
     paths = paths(diagram.S)
-    extensions = filter(path -> path[nodes] == path_segment,paths)
+    extensions = filter(path -> path[nodes] == Tuple(path_segment),paths)
     extensions
 end
 
