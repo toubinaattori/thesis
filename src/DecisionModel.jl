@@ -340,6 +340,7 @@ end
 
 function extension(diagram::InfluenceDiagram, path_segment::Vector{Int16},nodes::Vector{Int16})
     paths = paths!(diagram.S)
+    println(paths)
     extensions = filter(path -> path[nodes] == Tuple(path_segment),paths)
     extensions
 end
