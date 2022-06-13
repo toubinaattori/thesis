@@ -346,7 +346,7 @@ end
 
 function extension_complement(diagram::InfluenceDiagram, path_segment::Vector{Int16},nodes::Vector{Int16})
     paths = paths!(diagram.S)
-    extensions = Iterators.filter(path -> path[nodes] =! Tuple(path_segment),paths)
+    extensions = Iterators.filter(path -> path[nodes] != Tuple(path_segment),paths)
     extensions
 end
 
