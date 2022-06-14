@@ -92,12 +92,16 @@ function InformationStructureVariables(model::Model, diagram::InfluenceDiagram)
 end
 
 
-function path_compatibility_variable(model::Model, p_s::Float64, base_name::String="")
+function path_compatibility_variable(model::Model, p_s::Float64,is_one::Bool=false, base_name::String="")
     # Create a path compatiblity variable
     x = @variable(model, base_name=base_name)
 
     # Constraint on the lower and upper bounds.
-    @constraint(model, 0 ≤ x ≤ 1)
+    if is_one
+        @constraint(model, 0 ≤ x ≤ 1)
+    else
+        @constraint(model, 0 ≤ x ≤ p_s)
+    end
 
     return x
 end
@@ -200,6 +204,7 @@ x_s = PathCompatibilityVariables(model, diagram; probability_cut = false)
 function PathCompatibilityVariables(model::Model,
     diagram::InfluenceDiagram,
     z::DecisionVariables;
+    is_one::Bool = false,
     names::Bool=false,
     name::String="x",
     forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
@@ -218,7 +223,7 @@ function PathCompatibilityVariables(model::Model,
     # Create path compatibility variable for each effective path.
     N = length(diagram.S)
     variables_x_s = Dict{Path{N}, VariableRef}(
-        s => path_compatibility_variable(model, diagram.P(s), (names ? "$(name)$(s)" : ""))
+        s => path_compatibility_variable(model, diagram.P(s),is_one, (names ? "$(name)$(s)" : ""))
         for s in paths(diagram.S, fixed)
         if !iszero(diagram.P(s)) && !is_forbidden(s, forbidden_paths)
     )
