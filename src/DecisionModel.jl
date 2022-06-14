@@ -97,7 +97,7 @@ function path_compatibility_variable(model::Model, p_s::Float64, base_name::Stri
     x = @variable(model, base_name=base_name)
 
     # Constraint on the lower and upper bounds.
-    @constraint(model, 0 ≤ x ≤ p_s)
+    @constraint(model, 0 ≤ x ≤ 1)
 
     return x
 end
