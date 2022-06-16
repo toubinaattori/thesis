@@ -27,16 +27,15 @@ function decision_variable_augmented(model::Model, S::States, d::Node, I_d::Vect
     # Create decision variables.
     dims = S[[I_d; d]]
     dimensions = S[[I_d; d]]
-    if augmented_states 
-        K_j = filter(x -> x[2] == d,K)
-        for i in K_j
-            indices = findall(x->x==i[1], I_d)
-            for j in indices
-                dimensions[j] = dimensions[j] +1
-            end
+    K_j = filter(x -> x[2] == d,K)
+    for i in K_j
+        indices = findall(x->x==i[1], I_d)
+        for j in indices
+            dimensions[j] = dimensions[j] +1
         end
     end
     z_d = Array{VariableRef}(undef, dimensions...)
+    # Create a decision strategy variable for all state combinations of augmented information set
     for s in paths(dimensions)
         z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
         @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
@@ -44,7 +43,10 @@ function decision_variable_augmented(model::Model, S::States, d::Node, I_d::Vect
     # Constraints to one decision per decision strategy.
     pop!(dimensions)
     pop!(dims)
+    println(dimensions)
+    println(dims)
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
+    println(augmented_paths)
     for s_I in paths(S[I_d])
         feasible_augmented_paths = Iterators.filter(s -> all((s_I.==s) .| (s .== (dims .+ 1))),augmented_paths)
         @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in feasible_augmented_paths) for s_d in 1:S[d])  <= 1)
