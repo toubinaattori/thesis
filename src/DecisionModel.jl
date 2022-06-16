@@ -23,11 +23,13 @@ function decision_variable(model::Model, S::States, d::Node, I_d::Vector{Node},n
     return z_d
 end
 
-function decision_variable_augmented(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool,x_x::Dict{Tuple{Node, Node}, VariableRef}, base_name::String="")
-    # Create decision variables.
+function decision_variable_augmented(model::Model, S::States, d::Node, I_d::Vector{Node},n::AbstractNode,K::Vector{Tuple{Node,Node}},augmented_states::Bool, binary::Bool, base_name::String="")
+    # Non augmentet dimensions
     dims = S[[I_d; d]]
+    # Augmented dimensions
     dimensions = S[[I_d; d]]
     K_j = filter(x -> x[2] == d,K)
+    # Add 1 to dimensions for each k \in K(j)
     for i in K_j
         indices = findall(x->x==i[1], I_d)
         for j in indices
@@ -35,23 +37,23 @@ function decision_variable_augmented(model::Model, S::States, d::Node, I_d::Vect
         end
     end
     z_d = Array{VariableRef}(undef, dimensions...)
-    # Create a decision strategy variable for all state combinations of augmented information set
     for s in paths(dimensions)
-        z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
-        @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
+        if binary
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)",binary = true)
+        else
+            z_d[s...] = @variable(model,base_name="$(base_name)_$(s)")
+            @constraint(model,0 ≤ z_d[s...] ≤ 1.0)
+        end
     end
-    # Constraints to one decision per decision strategy.
+    # dimensions S[[I_d; d]] => S[[I_d]]
     pop!(dimensions)
+    # dims S[[I_d; d]] => S[[I_d]]
     pop!(dims)
-    println(dimensions)
-    println(dims)
+    # Paths that contain a zero state
     augmented_paths = Iterators.filter(x -> x ∉ paths(dims), paths(dimensions))
-    for i in augmented_paths
-        println(i)
-    end
     for s_I in paths(S[I_d])
-        feasible_augmented_paths = Iterators.filter(s -> all((s_I.==s) .| (s .== (dims .+ 1))),augmented_paths)
-        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in feasible_augmented_paths) for s_d in 1:S[d])  == 1)
+        zero_extension = Iterators.filter(s -> all((s_I.==s) .| (s .== (dims .+ 1))),augmented_paths)
+        @constraint(model, sum(z_d[s_I..., s_d] + sum(z_d[s..., s_d] for s in zero_extension) for s_d in 1:S[d])  == 1)
     end
     return z_d
 end
@@ -249,8 +251,7 @@ end
 function AugmentedStateVariables(model::Model,
     diagram::InfluenceDiagram,
     z::DecisionVariables,
-    x_s::PathCompatibilityVariables,
-    variables_x::Dict{Tuple{Int16, Int16}, VariableRef};
+    x_s::PathCompatibilityVariables;
     names::Bool=false,
     name::String="x",
     forbidden_paths::Vector{ForbiddenPath}=ForbiddenPath[],
@@ -261,6 +262,10 @@ function AugmentedStateVariables(model::Model,
 
     # Create path compatibility variable for each effective path.
     N = length(diagram.S)
+    variables_x = Dict{Tuple{Node,Node}, VariableRef}(
+        s => information_structure_variable(model, (names ? "$(name)$(s)" : ""))
+        for s in diagram.K
+    )
 
 
     # Add information constraints for each decision node
