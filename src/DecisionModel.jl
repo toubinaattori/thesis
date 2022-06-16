@@ -81,8 +81,8 @@ function DecisionVariables(model::Model, diagram::InfluenceDiagram;binary::Bool=
     DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space,binary, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
-function DecisionVariablesAugmented(model::Model, diagram::InfluenceDiagram, x_x::Dict{Tuple{Node, Node}, VariableRef}; names::Bool=false, name::String="z")
-    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable_augmented(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space,x_x, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
+function DecisionVariablesAugmented(model::Model, diagram::InfluenceDiagram; names::Bool=false, name::String="z")
+    DecisionVariables(diagram.D, diagram.I_j[diagram.D], [decision_variable_augmented(model, diagram.S, d, I_d, n, diagram.K,diagram.Augmented_space, "$(name)_$(d)") for (d, I_d, n) in zip(diagram.D, diagram.I_j[diagram.D],diagram.Nodes[diagram.D])])
 end
 
 function is_forbidden(s::Path, forbidden_paths::Vector{ForbiddenPath})
